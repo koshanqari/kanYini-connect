@@ -128,9 +128,9 @@ export async function POST(request: NextRequest) {
         }
 
         // Parse role, is_active, and is_verified
-        const role = (row.role?.toLowerCase() === 'admin' ? 'admin' : 'user') || 'user';
-        const isActive = row.is_active?.toLowerCase() === 'true' || true; // Default to true
-        const isVerified = row.is_verified?.toLowerCase() === 'true' || false; // Default to false
+        const role = row.role?.toLowerCase() === 'admin' ? 'admin' : 'user';
+        const isActive = row.is_active?.toLowerCase() === 'true' ? true : (row.is_active?.toLowerCase() === 'false' ? false : true); // Default to true
+        const isVerified = row.is_verified?.toLowerCase() === 'true' ? true : false; // Default to false
 
         // Create user
         const userResult = await query(

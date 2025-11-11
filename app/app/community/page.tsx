@@ -246,7 +246,9 @@ export default function MyCommunityPage() {
                     {person.name}
                   </h3>
                   {person.is_verified && (
-                    <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" title="Verified" />
+                    <span title="Verified">
+                      <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                    </span>
                   )}
                 </div>
                   {person.designation && (

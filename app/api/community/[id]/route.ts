@@ -33,7 +33,7 @@ export async function GET(
       [payload.userId]
     );
     const currentUserIsVerified = currentUserResult.rows[0]?.is_verified || false;
-    const isOwnProfile = payload.userId === params.id;
+    const isOwnProfile = payload.userId === parseInt(params.id, 10);
 
     // Fetch user profile
     const profileResult = await query(
