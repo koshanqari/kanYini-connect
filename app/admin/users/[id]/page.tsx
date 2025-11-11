@@ -742,33 +742,6 @@ export default function AdminUserEditPage({ params }: { params: Promise<{ id: st
                 </div>
               </label>
             </div>
-
-            {/* Or use URL */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">OR</span>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Profile Picture URL
-              </label>
-              <input
-                type="text"
-                value={editValues.profile_picture_url || ''}
-                onChange={(e) => {
-                  setEditValues({ ...editValues, profile_picture_url: e.target.value });
-                  setPreviewUrl(null);
-                }}
-                placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
-              />
-              <p className="text-xs text-gray-500 mt-1">Enter a URL if you prefer to use an external image</p>
-            </div>
           </div>
         </div>
       </EditModal>
@@ -817,7 +790,7 @@ export default function AdminUserEditPage({ params }: { params: Promise<{ id: st
               type="tel"
               value={editValues.phone || ''}
               onChange={(e) => setEditValues({ ...editValues, phone: e.target.value })}
-              placeholder="+92-300-1234567"
+              placeholder="+254-712345678"
               className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
             />
           </div>
@@ -1058,7 +1031,7 @@ export default function AdminUserEditPage({ params }: { params: Promise<{ id: st
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">State/Region</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">State/Region/County</label>
             <SearchableSelect
               options={editValues.selectedCountryCode 
                 ? State.getStatesOfCountry(editValues.selectedCountryCode).map(state => ({

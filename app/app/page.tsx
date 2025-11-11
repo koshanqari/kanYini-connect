@@ -346,7 +346,7 @@ export default function MyProfilePage() {
               <p className="text-sm text-gray-900">{profile?.email}</p>
             </div>
           </div>
-          {profile?.phone ? (
+          {profile?.phone && (
             <div className="flex items-start gap-3">
               <Phone className="w-5 h-5 text-gray-500 mt-0.5" />
               <div>
@@ -354,11 +354,6 @@ export default function MyProfilePage() {
                 <p className="text-sm text-gray-900">{profile.phone}</p>
               </div>
             </div>
-          ) : (
-            <button className="text-sm text-blue-600 hover:underline flex items-center gap-1">
-              <Plus className="w-4 h-4" />
-              Add phone
-        </button>
           )}
           {profile?.preferred_time_to_connect && (
             <div className="flex items-start gap-3">
@@ -405,61 +400,77 @@ export default function MyProfilePage() {
               </div>
             </div>
           )}
+          
+          {/* Show "Add Details" button if any field is missing */}
+          {(!profile?.phone || !profile?.preferred_time_to_connect || !profile?.preferred_way_to_connect || !profile?.social_media_links) && (
+            <button
+              onClick={() => openEditModal('contact', {
+                phone: profile?.phone || '',
+                preferred_time_to_connect: profile?.preferred_time_to_connect || '',
+                preferred_way_to_connect: profile?.preferred_way_to_connect || '',
+                social_media_links: profile?.social_media_links || ''
+              })}
+              className="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2"
+            >
+              <Plus className="w-4 h-4" />
+              Add Details
+            </button>
+          )}
         </div>
       </div>
 
       {/* My Expertise Section */}
-      {profile?.my_expertise ? (
-        <div className="bg-white rounded-lg shadow p-4">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-lg font-semibold">My Expertise</h3>
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-lg font-semibold">My Expertise</h3>
+          {profile?.my_expertise && (
             <button 
               onClick={() => openEditModal('expertise', { my_expertise: profile.my_expertise })}
               className="text-gray-600 hover:text-gray-900"
             >
               <Edit2 className="w-4 h-4" />
             </button>
-          </div>
-          <p className="text-sm text-gray-700 whitespace-pre-wrap">{profile.my_expertise}</p>
+          )}
         </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow p-4">
-          <h3 className="text-lg font-semibold mb-2">My Expertise</h3>
-          <p className="text-sm text-gray-500">Let others know how you can help</p>
+        {profile?.my_expertise ? (
+          <p className="text-sm text-gray-700 whitespace-pre-wrap">{profile.my_expertise}</p>
+        ) : (
           <button 
             onClick={() => openEditModal('expertise', { my_expertise: '' })}
-            className="mt-2 text-sm text-blue-600 hover:underline flex items-center gap-1"
+            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
           >
             <Plus className="w-4 h-4" />
-            Add expertise
+            Add Details
           </button>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Experience Section */}
       <div className="bg-white rounded-lg shadow p-4">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">Experience</h3>
-          <button 
-            onClick={() => openEditModal('experience', {
-              id: null,
-              designation: '',
-              industry: '',
-              company_name: '',
-              description: '',
-              start_date: '',
-              end_date: '',
-              is_present: false,
-              location_city: '',
-              location_state: '',
-              location_country: '',
-              selectedCountryCode: '',
-              selectedStateCode: ''
-            })}
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
+          {experiences && experiences.length > 0 && (
+            <button 
+              onClick={() => openEditModal('experience', {
+                id: null,
+                designation: '',
+                industry: '',
+                company_name: '',
+                description: '',
+                start_date: '',
+                end_date: '',
+                is_present: false,
+                location_city: '',
+                location_state: '',
+                location_country: '',
+                selectedCountryCode: '',
+                selectedStateCode: ''
+              })}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          )}
         </div>
         {experiences && experiences.length > 0 ? (
           <div className="space-y-4">
@@ -501,9 +512,27 @@ export default function MyProfilePage() {
             ))}
           </div>
         ) : (
-        <div className="text-sm text-gray-500">
-          Add your work experience to showcase your career journey
-        </div>
+          <button
+            onClick={() => openEditModal('experience', {
+              id: null,
+              designation: '',
+              industry: '',
+              company_name: '',
+              description: '',
+              start_date: '',
+              end_date: '',
+              is_present: false,
+              location_city: '',
+              location_state: '',
+              location_country: '',
+              selectedCountryCode: '',
+              selectedStateCode: ''
+            })}
+            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+          >
+            <Plus className="w-4 h-4" />
+            Add Details
+          </button>
         )}
       </div>
 
@@ -511,22 +540,24 @@ export default function MyProfilePage() {
       <div className="bg-white rounded-lg shadow p-4">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">Education</h3>
-          <button 
-            onClick={() => openEditModal('education', {
-              id: null,
-              type: 'education',
-              school: '',
-              course: '',
-              degree_or_certificate_name: '',
-              start_date: '',
-              end_date: '',
-              is_present: false,
-              description: ''
-            })}
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
+          {education && education.length > 0 && (
+            <button 
+              onClick={() => openEditModal('education', {
+                id: null,
+                type: 'education',
+                school: '',
+                course: '',
+                degree_or_certificate_name: '',
+                start_date: '',
+                end_date: '',
+                is_present: false,
+                description: ''
+              })}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          )}
         </div>
         {education && education.length > 0 ? (
           <div className="space-y-4">
@@ -569,9 +600,23 @@ export default function MyProfilePage() {
             ))}
           </div>
         ) : (
-        <div className="text-sm text-gray-500">
-          Add your educational background and certifications
-        </div>
+          <button
+            onClick={() => openEditModal('education', {
+              id: null,
+              type: 'education',
+              school: '',
+              course: '',
+              degree_or_certificate_name: '',
+              start_date: '',
+              end_date: '',
+              is_present: false,
+              description: ''
+            })}
+            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+          >
+            <Plus className="w-4 h-4" />
+            Add Details
+          </button>
         )}
       </div>
 
@@ -579,12 +624,14 @@ export default function MyProfilePage() {
       <div className="bg-white rounded-lg shadow p-4 mb-4">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-semibold">Skills</h3>
-          <button 
-            onClick={() => openEditModal('skills', { selectedSkill: '', newSkillName: '' })}
-            className="text-gray-600 hover:text-gray-900"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
+          {skills && skills.length > 0 && (
+            <button 
+              onClick={() => openEditModal('skills', { selectedSkill: '', newSkillName: '' })}
+              className="text-gray-600 hover:text-gray-900"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
+          )}
         </div>
         {skills && skills.length > 0 ? (
           <div className="flex flex-wrap gap-2">
@@ -624,9 +671,13 @@ export default function MyProfilePage() {
             ))}
           </div>
         ) : (
-        <div className="text-sm text-gray-500">
-          Show your top skills to stand out
-        </div>
+          <button
+            onClick={() => openEditModal('skills', { selectedSkill: '', newSkillName: '' })}
+            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+          >
+            <Plus className="w-4 h-4" />
+            Add Details
+          </button>
         )}
       </div>
 
@@ -698,33 +749,6 @@ export default function MyProfilePage() {
                 </div>
               </label>
             </div>
-
-            {/* Or use URL */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">OR</span>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Profile Picture URL
-              </label>
-              <input
-                type="text"
-                value={editValues.profile_picture_url || ''}
-                onChange={(e) => {
-                  setEditValues({ ...editValues, profile_picture_url: e.target.value });
-                  setPreviewUrl(null);
-                }}
-                placeholder="https://example.com/photo.jpg"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
-              />
-              <p className="text-xs text-gray-500 mt-1">Enter a URL if you prefer to use an external image</p>
-            </div>
           </div>
         </div>
       </EditModal>
@@ -776,7 +800,7 @@ export default function MyProfilePage() {
                 type="tel"
                 value={editValues.phone || ''}
                 onChange={(e) => setEditValues({ ...editValues, phone: e.target.value })}
-                placeholder="+92-300-1234567"
+                placeholder="+254-712345678"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
@@ -1039,7 +1063,7 @@ export default function MyProfilePage() {
           
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              State/Region
+              State/Region/County
             </label>
             <SearchableSelect
               options={editValues.selectedCountryCode 

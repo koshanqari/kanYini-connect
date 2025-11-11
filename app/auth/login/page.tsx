@@ -91,63 +91,71 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center mb-6">Alumni Portal</h1>
-        <p className="text-gray-600 text-center mb-8">Sign in to continue</p>
+    <div className="min-h-screen flex items-start sm:items-center justify-center bg-gray-50 pt-8 pb-4 px-4 sm:py-4">
+      <div className="max-w-md w-full bg-white p-4 sm:p-8 rounded-lg shadow-md">
+        <div className="flex flex-col items-center mb-4 sm:mb-6">
+          <div className="mb-2 sm:mb-4">
+            <img 
+              src="https://icmhs.co.ke/wp-content/uploads/2022/07/ICMHS_new_logo-without-any-background.png" 
+              alt="ICMHS" 
+              className="h-12 sm:h-16 w-auto object-contain"
+            />
+          </div>
+          <h1 className="text-xl sm:text-2xl font-bold text-center">Alumni Portal</h1>
+        </div>
+        <p className="text-gray-600 text-center mb-4 sm:mb-8 text-sm sm:text-base">Sign in to continue</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
-            <div className="flex gap-2">
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setOtpSent(false);
-                  setSuccess('');
-                }}
-                required
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="your@email.com"
-              />
-              <button
-                type="button"
-                onClick={handleRequestOTP}
-                disabled={requestingOTP || !email}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-              >
-                {requestingOTP ? 'Sending...' : 'Request OTP'}
-              </button>
-            </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setOtpSent(false);
+                setSuccess('');
+              }}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="your@email.com"
+            />
           </div>
 
           <div>
             <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-1">
               OTP
             </label>
-            <input
-              id="otp"
-              type="text"
-              value={otp}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, '');
-                // Allow up to 6 digits (for email OTP) or 4 digits (for secret OTP)
-                setOtp(value.slice(0, 6));
-              }}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter OTP"
-              maxLength={6}
-            />
+            <div className="flex gap-2">
+              <input
+                id="otp"
+                type="text"
+                value={otp}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, '');
+                  setOtp(value.slice(0, 6));
+                }}
+                required
+                className="flex-1 min-w-0 px-2 sm:px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                placeholder="Enter OTP"
+                maxLength={6}
+              />
+              <button
+                type="button"
+                onClick={handleRequestOTP}
+                disabled={requestingOTP || !email}
+                className="flex-1 min-w-0 px-2 sm:px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm whitespace-nowrap"
+              >
+                {requestingOTP ? 'Sending...' : 'Request OTP'}
+              </button>
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               {otpSent 
                 ? '✓ OTP sent! Check your email. (Valid for 10 minutes)'
-                : 'Enter the OTP sent to your email, or use secret OTP 7274'}
+                : 'Enter the OTP sent to your email'}
             </p>
           </div>
 
@@ -171,8 +179,8 @@ export default function LoginPage() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
 
-          <div className="text-center pt-4">
-            <p className="text-sm text-gray-600">
+          <div className="text-center pt-2 sm:pt-4">
+            <p className="text-xs sm:text-sm text-gray-600">
               Don't have an account?{' '}
               <Link href="/auth/signup" className="text-blue-600 hover:underline font-medium">
                 Sign Up
