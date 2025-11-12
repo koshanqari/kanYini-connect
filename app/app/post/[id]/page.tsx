@@ -1,11 +1,12 @@
 'use client';
 
-import { ArrowLeft, Calendar, MapPin, Users, Heart, MessageCircle, Share2, Play, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Heart, MessageCircle, Share2, Play, Image as ImageIcon, Headphones, FileText } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
+import { useState } from 'react';
 
 interface Post {
   id: number;
-  type: 'text' | 'photo' | 'video';
+  type: 'text' | 'photo' | 'video' | 'podcast' | 'article';
   content: string;
   author: string;
   authorRole: string;
@@ -14,12 +15,18 @@ interface Post {
   comments: number;
   mediaUrl?: string;
   videoThumbnail?: string;
+  podcastUrl?: string;
+  podcastDuration?: string;
+  articleUrl?: string;
+  articleTitle?: string;
+  articleExcerpt?: string;
 }
 
 export default function ProjectDetailPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
+  const [contentFilter, setContentFilter] = useState<'all' | 'posts' | 'podcasts' | 'articles'>('all');
 
   // Project details
   const projects: { [key: string]: any } = {
@@ -101,7 +108,7 @@ export default function ProjectDetailPage() {
       {
         id: 1,
         type: 'photo',
-        content: 'Venue preparations are underway! The Nairobi Serena Hotel ballroom is being transformed for our gala event. Excited to host 300+ changemakers under one roof! 🎉',
+        content: 'Venue preparations are underway! The Nairobi Serena Hotel ballroom is being transformed for our gala event. Excited to host 300+ changemakers under one roof!',
         author: 'Sarah Mwangi',
         authorRole: 'Event Coordinator',
         timestamp: '2 hours ago',
@@ -110,9 +117,35 @@ export default function ProjectDetailPage() {
         mediaUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800'
       },
       {
+        id: 5,
+        type: 'podcast',
+        content: 'Watch our latest video podcast episode featuring community leaders discussing water access challenges and solutions in rural Kenya.',
+        author: 'Sarah Mwangi',
+        authorRole: 'Project Lead',
+        timestamp: '3 days ago',
+        likes: 89,
+        comments: 24,
+        podcastUrl: 'https://example.com/podcast1',
+        podcastDuration: '45 min',
+        videoThumbnail: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800'
+      },
+      {
+        id: 6,
+        type: 'article',
+        content: 'Read our comprehensive article on sustainable water management practices and their impact on rural communities.',
+        author: 'Emma Akinyi',
+        authorRole: 'Research Coordinator',
+        timestamp: '1 week ago',
+        likes: 156,
+        comments: 42,
+        articleUrl: 'https://example.com/article1',
+        articleTitle: 'Sustainable Water Management in Rural Kenya',
+        articleExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...'
+      },
+      {
         id: 2,
         type: 'video',
-        content: 'Meet our keynote speaker! Dr. James Kariuki will be sharing insights on climate action and community impact. Don\'t miss this inspiring talk! 🎤',
+        content: 'Meet our keynote speaker! Dr. James Kariuki will be sharing insights on climate action and community impact. Don\'t miss this inspiring talk!',
         author: 'David Ochieng',
         authorRole: 'Program Manager',
         timestamp: '5 hours ago',
@@ -146,13 +179,39 @@ export default function ProjectDetailPage() {
       {
         id: 1,
         type: 'video',
-        content: 'Workshop preview! Learn how to build a compost system at home. Simple, effective, and great for your garden! Join us next week for the full workshop. 🌱',
+        content: 'Workshop preview! Learn how to build a compost system at home. Simple, effective, and great for your garden! Join us next week for the full workshop.',
         author: 'Emma Akinyi',
         authorRole: 'Sustainability Coach',
         timestamp: '3 hours ago',
         likes: 56,
         comments: 18,
         videoThumbnail: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800'
+      },
+      {
+        id: 7,
+        type: 'podcast',
+        content: 'Watch our video podcast with indigenous knowledge keepers sharing traditional farming techniques and their relevance in modern sustainability.',
+        author: 'Emma Akinyi',
+        authorRole: 'Cultural Researcher',
+        timestamp: '5 days ago',
+        likes: 112,
+        comments: 31,
+        podcastUrl: 'https://example.com/podcast2',
+        podcastDuration: '38 min',
+        videoThumbnail: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800'
+      },
+      {
+        id: 8,
+        type: 'article',
+        content: 'Discover how traditional ecological knowledge is being preserved and integrated into modern conservation efforts.',
+        author: 'John Kariuki',
+        authorRole: 'Documentation Lead',
+        timestamp: '2 weeks ago',
+        likes: 203,
+        comments: 58,
+        articleUrl: 'https://example.com/article2',
+        articleTitle: 'Preserving Indigenous Knowledge for Future Generations',
+        articleExcerpt: 'A deep dive into the importance of documenting traditional practices and their role in environmental conservation...'
       },
       {
         id: 2,
@@ -180,13 +239,39 @@ export default function ProjectDetailPage() {
       {
         id: 1,
         type: 'photo',
-        content: 'Last beach cleanup results: 2.5 TONS of plastic removed! Together we\'re making a real difference. Next cleanup is even bigger - join us! 🌊',
+        content: 'Last beach cleanup results: 2.5 TONS of plastic removed! Together we\'re making a real difference. Next cleanup is even bigger - join us!',
         author: 'John Kariuki',
         authorRole: 'Environmental Officer',
         timestamp: '4 hours ago',
         likes: 134,
         comments: 42,
         mediaUrl: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?w=800'
+      },
+      {
+        id: 9,
+        type: 'podcast',
+        content: 'Video podcast: Marine biologists discuss the impact of plastic pollution on coastal ecosystems and restoration strategies.',
+        author: 'John Kariuki',
+        authorRole: 'Marine Conservationist',
+        timestamp: '1 week ago',
+        likes: 178,
+        comments: 45,
+        podcastUrl: 'https://example.com/podcast3',
+        podcastDuration: '52 min',
+        videoThumbnail: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=800'
+      },
+      {
+        id: 10,
+        type: 'article',
+        content: 'Comprehensive analysis of coastal ecosystem health and the long-term benefits of mangrove restoration projects.',
+        author: 'Lucy Wambui',
+        authorRole: 'Research Analyst',
+        timestamp: '3 weeks ago',
+        likes: 267,
+        comments: 73,
+        articleUrl: 'https://example.com/article3',
+        articleTitle: 'Coastal Ecosystem Restoration: A Path Forward',
+        articleExcerpt: 'Examining the science behind mangrove restoration and its critical role in protecting our coastlines...'
       },
       {
         id: 2,
@@ -225,13 +310,39 @@ export default function ProjectDetailPage() {
       {
         id: 1,
         type: 'photo',
-        content: 'Youth voices matter! These young leaders are preparing powerful presentations on climate action. The future is in great hands! 💪',
+        content: 'Youth voices matter! These young leaders are preparing powerful presentations on climate action. The future is in great hands!',
         author: 'James Kamau',
         authorRole: 'Youth Program Lead',
         timestamp: '6 hours ago',
         likes: 98,
         comments: 34,
         mediaUrl: 'https://images.unsplash.com/photo-1529390079861-591de354faf5?w=800'
+      },
+      {
+        id: 11,
+        type: 'podcast',
+        content: 'Video podcast: Young climate activists share their journey and vision for a sustainable future in this inspiring series.',
+        author: 'Grace Wanjiru',
+        authorRole: 'Program Director',
+        timestamp: '4 days ago',
+        likes: 145,
+        comments: 39,
+        podcastUrl: 'https://example.com/podcast4',
+        podcastDuration: '41 min',
+        videoThumbnail: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800'
+      },
+      {
+        id: 12,
+        type: 'article',
+        content: 'Exploring the role of youth leadership in driving climate action and building sustainable communities.',
+        author: 'David Ochieng',
+        authorRole: 'Youth Engagement Lead',
+        timestamp: '2 weeks ago',
+        likes: 189,
+        comments: 52,
+        articleUrl: 'https://example.com/article4',
+        articleTitle: 'Empowering the Next Generation of Climate Leaders',
+        articleExcerpt: 'How youth-led initiatives are transforming environmental advocacy and creating lasting change...'
       },
       {
         id: 2,
@@ -257,7 +368,16 @@ export default function ProjectDetailPage() {
     ]
   };
 
-  const posts = projectPosts[projectId] || projectPosts['1'];
+  const allPosts = projectPosts[projectId] || projectPosts['1'];
+
+  // Filter posts based on contentFilter
+  const filteredPosts = allPosts.filter(post => {
+    if (contentFilter === 'all') return true;
+    if (contentFilter === 'posts') return ['text', 'photo', 'video'].includes(post.type);
+    if (contentFilter === 'podcasts') return post.type === 'podcast';
+    if (contentFilter === 'articles') return post.type === 'article';
+    return true;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -393,11 +513,37 @@ export default function ProjectDetailPage() {
           </div>
         </div>
 
-        {/* Posts Section */}
+        {/* Content Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-bold text-gray-900 px-1">Updates & Posts</h3>
+          <div className="flex items-center justify-between px-1 mb-2">
+            <h3 className="text-lg font-bold text-gray-900">Updates & Content</h3>
+          </div>
+
+          {/* Filters */}
+          <div className="bg-white rounded-lg shadow p-3">
+            <div className="flex gap-2 overflow-x-auto">
+              {[
+                { id: 'all', label: 'All' },
+                { id: 'posts', label: 'Posts' },
+                { id: 'podcasts', label: 'Podcasts' },
+                { id: 'articles', label: 'Articles' }
+              ].map(filter => (
+                <button
+                  key={filter.id}
+                  onClick={() => setContentFilter(filter.id as any)}
+                  className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
+                    contentFilter === filter.id
+                      ? 'bg-kanyini-primary text-white border-kanyini-primary'
+                      : 'border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          </div>
           
-          {posts.map((post) => (
+          {filteredPosts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow overflow-hidden">
               {/* Post Header */}
               <div className="p-4 flex items-start gap-3">
@@ -437,6 +583,89 @@ export default function ProjectDetailPage() {
                     <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
                       <Play className="w-8 h-8 text-kanyini-primary ml-1" />
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Podcast */}
+              {post.type === 'podcast' && (
+                <div className="px-4 pb-4">
+                  {post.videoThumbnail ? (
+                    <div 
+                      className="relative cursor-pointer"
+                      onClick={() => window.open(post.podcastUrl, '_blank')}
+                    >
+                      <img
+                        src={post.videoThumbnail}
+                        alt="Podcast thumbnail"
+                        className="w-full h-64 object-cover rounded-lg"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+                        <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                          <Play className="w-8 h-8 text-kanyini-primary ml-1" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="bg-white bg-opacity-90 rounded-lg p-2 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Headphones className="w-4 h-4 text-gray-600" />
+                            <span className="text-xs font-medium text-gray-900">Video Podcast</span>
+                          </div>
+                          {post.podcastDuration && (
+                            <span className="text-xs text-gray-600">{post.podcastDuration}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                          <Headphones className="w-6 h-6 text-gray-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-gray-900">Podcast Episode</p>
+                          {post.podcastDuration && (
+                            <p className="text-xs text-gray-500">{post.podcastDuration}</p>
+                          )}
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => window.open(post.podcastUrl, '_blank')}
+                        className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
+                      >
+                        <Play className="w-4 h-4" />
+                        Listen Now
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Article */}
+              {post.type === 'article' && (
+                <div className="px-4 pb-4">
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-6 h-6 text-gray-600" />
+                      </div>
+                      <div className="flex-1">
+                        {post.articleTitle && (
+                          <h5 className="text-sm font-bold text-gray-900 mb-1">{post.articleTitle}</h5>
+                        )}
+                        {post.articleExcerpt && (
+                          <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.articleExcerpt}</p>
+                        )}
+                      </div>
+                    </div>
+                    <button 
+                      onClick={() => window.open(post.articleUrl, '_blank')}
+                      className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Read Article
+                    </button>
                   </div>
                 </div>
               )}

@@ -9,9 +9,9 @@ export default function BottomNav() {
 
   const navItems = [
     { name: 'Profile', href: '/app', Icon: User, active: true },
-    { name: 'Community', href: '/app/community', Icon: Users, active: true },
+    { name: 'Connect', href: '/app/community', Icon: Users, active: true },
     { name: 'Feed', href: '/app/jobs', Icon: Newspaper, active: true },
-    { name: 'Projects', href: '/app/post', Icon: FolderKanban, active: true },
+    { name: 'Explore', href: '/app/post', Icon: FolderKanban, active: true },
     { name: 'Impact', href: '/app/impact', Icon: TrendingUp, active: true },
   ];
 

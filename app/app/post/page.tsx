@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, MapPin, Users, Clock, Video, DollarSign, Mic, Heart, Search, Filter } from 'lucide-react';
+import { Calendar, MapPin, Users, Clock, GraduationCap, Briefcase, Award, Search, Filter, Heart, Video, Mic } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -26,9 +26,27 @@ interface Event {
   isVirtual?: boolean;
 }
 
+interface Fellowship {
+  id: number;
+  title: string;
+  organization: string;
+  duration: string;
+  stipend: string;
+  location: string;
+  positions: number;
+  positionsFilled: number;
+  applicationDeadline: string;
+  startDate: string;
+  description: string;
+  requirements: string[];
+  type: 'leadership' | 'research' | 'community' | 'technical';
+  icon: any;
+}
+
 export default function EventsPage() {
+  const [activeTab, setActiveTab] = useState<'projects' | 'programs'>('projects');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState('upcoming');
+  const [activeFilter, setActiveFilter] = useState('all');
   const router = useRouter();
 
   const events: Event[] = [
@@ -169,12 +187,103 @@ export default function EventsPage() {
     }
   ];
 
+  const fellowships: Fellowship[] = [
+    {
+      id: 1,
+      title: 'Environmental Leadership Fellowship',
+      organization: 'Kanyini Earth Project',
+      duration: '12 months',
+      stipend: '$1,500/month',
+      location: 'Nairobi, Kenya',
+      positions: 10,
+      positionsFilled: 7,
+      applicationDeadline: 'January 31, 2026',
+      startDate: 'March 1, 2026',
+      description: 'Join our flagship leadership program designed to train the next generation of environmental leaders. Work on real conservation projects while developing skills in project management, community organizing, and climate advocacy.',
+      requirements: ['Bachelor\'s degree or equivalent', '2+ years experience in environmental work', 'Strong communication skills', 'Passion for climate action'],
+      type: 'leadership',
+      icon: Award
+    },
+    {
+      id: 2,
+      title: 'Community Organizing Fellowship',
+      organization: 'Kanyini Earth Project',
+      duration: '6 months',
+      stipend: '$1,200/month',
+      location: 'Multiple Locations',
+      positions: 15,
+      positionsFilled: 12,
+      applicationDeadline: 'December 20, 2025',
+      startDate: 'January 15, 2026',
+      description: 'Work directly with rural communities to implement sustainable practices. Learn grassroots organizing, conduct workshops, and build local capacity for environmental stewardship.',
+      requirements: ['Experience working with communities', 'Fluent in Swahili and English', 'Willingness to travel', 'Cultural sensitivity'],
+      type: 'community',
+      icon: Users
+    },
+    {
+      id: 3,
+      title: 'Research & Documentation Fellowship',
+      organization: 'Kanyini Earth Project',
+      duration: '9 months',
+      stipend: '$1,300/month',
+      location: 'Nairobi, Kenya (with field work)',
+      positions: 5,
+      positionsFilled: 3,
+      applicationDeadline: 'February 15, 2026',
+      startDate: 'April 1, 2026',
+      description: 'Conduct environmental research, document indigenous knowledge, and contribute to policy papers. Ideal for those interested in bridging traditional wisdom with modern conservation science.',
+      requirements: ['Master\'s degree or pursuing', 'Research experience', 'Strong writing skills', 'Data analysis capabilities'],
+      type: 'research',
+      icon: GraduationCap
+    },
+    {
+      id: 4,
+      title: 'Youth Climate Action Fellowship',
+      organization: 'Kanyini Earth Project',
+      duration: '6 months',
+      stipend: '$1,000/month',
+      location: 'Virtual + On-site',
+      positions: 20,
+      positionsFilled: 15,
+      applicationDeadline: 'January 10, 2026',
+      startDate: 'February 1, 2026',
+      description: 'Designed for young activists (18-25 years). Learn climate advocacy, social media campaigns, and organize youth-led initiatives. Includes mentorship from experienced environmental leaders.',
+      requirements: ['Age 18-25', 'Active in climate advocacy', 'Social media savvy', 'Team player'],
+      type: 'leadership',
+      icon: Award
+    },
+    {
+      id: 5,
+      title: 'Technical Conservation Fellowship',
+      organization: 'Kanyini Earth Project',
+      duration: '12 months',
+      stipend: '$1,600/month',
+      location: 'Coastal Region, Kenya',
+      positions: 8,
+      positionsFilled: 5,
+      applicationDeadline: 'March 1, 2026',
+      startDate: 'May 1, 2026',
+      description: 'Hands-on work in mangrove restoration, coral reef protection, and coastal ecosystem monitoring. Technical training in marine conservation and GIS mapping included.',
+      requirements: ['Background in marine biology/environmental science', 'Diving certification (preferred)', 'Physical fitness', 'Technical aptitude'],
+      type: 'technical',
+      icon: Briefcase
+    }
+  ];
+
   const filters = [
-    { id: 'upcoming', label: 'Upcoming' },
-    { id: 'virtual', label: 'Virtual' },
+    { id: 'all', label: 'All' },
+    { id: 'fundraiser', label: 'Fundraisers' },
     { id: 'workshop', label: 'Workshops' },
     { id: 'community', label: 'Community' },
-    { id: 'fundraiser', label: 'Fundraisers' }
+    { id: 'virtual', label: 'Virtual' }
+  ];
+
+  const fellowshipFilters = [
+    { id: 'all', label: 'All Programs' },
+    { id: 'leadership', label: 'Leadership' },
+    { id: 'research', label: 'Research' },
+    { id: 'community', label: 'Community' },
+    { id: 'technical', label: 'Technical' }
   ];
 
   const filteredEvents = events.filter(event => {
@@ -183,11 +292,23 @@ export default function EventsPage() {
                          event.location.toLowerCase().includes(searchQuery.toLowerCase());
     
     let matchesFilter = true;
-    if (activeFilter === 'virtual') {
+    if (activeFilter === 'all') {
+      matchesFilter = true;
+    } else if (activeFilter === 'virtual') {
       matchesFilter = event.isVirtual === true;
-    } else if (activeFilter !== 'upcoming') {
+    } else {
       matchesFilter = event.type === activeFilter;
     }
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  const filteredFellowships = fellowships.filter(fellowship => {
+    const matchesSearch = fellowship.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         fellowship.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         fellowship.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesFilter = activeFilter === 'all' || fellowship.type === activeFilter;
     
     return matchesSearch && matchesFilter;
   });
@@ -196,21 +317,49 @@ export default function EventsPage() {
     <div className="p-4 space-y-4">
       {/* Header */}
       <div className="bg-gradient-to-r from-kanyini-primary to-green-700 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">Projects</h1>
-        <p className="text-green-50">Join community events and initiatives</p>
-        <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+        <h1 className="text-2xl font-bold mb-2">{activeTab === 'projects' ? 'Projects' : 'Programs & Fellowships'}</h1>
+        <p className="text-green-50">{activeTab === 'projects' ? 'Join community projects and initiatives' : 'Apply for fellowship programs'}</p>
+        <div className="mt-4 grid grid-cols-2 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold">15+</div>
-            <div className="text-xs text-green-100">Events/Month</div>
+            <div className="text-2xl font-bold">{activeTab === 'projects' ? '7' : '5'}</div>
+            <div className="text-xs text-green-100">{activeTab === 'projects' ? 'Active Projects' : 'Programs'}</div>
           </div>
           <div>
-            <div className="text-2xl font-bold">2.5K+</div>
-            <div className="text-xs text-green-100">Participants</div>
+            <div className="text-2xl font-bold">{activeTab === 'projects' ? '2.5K+' : '58'}</div>
+            <div className="text-xs text-green-100">{activeTab === 'projects' ? 'Participants' : 'Positions'}</div>
           </div>
-          <div>
-            <div className="text-2xl font-bold">50+</div>
-            <div className="text-xs text-green-100">Partners</div>
-          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-white rounded-lg shadow">
+        <div className="flex">
+          <button
+            onClick={() => {
+              setActiveTab('projects');
+              setActiveFilter('all');
+            }}
+            className={`flex-1 py-3 text-sm font-semibold transition ${
+              activeTab === 'projects'
+                ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                : 'text-gray-600 border-b-2 border-transparent'
+            }`}
+          >
+            Projects
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('programs');
+              setActiveFilter('all');
+            }}
+            className={`flex-1 py-3 text-sm font-semibold transition ${
+              activeTab === 'programs'
+                ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                : 'text-gray-600 border-b-2 border-transparent'
+            }`}
+          >
+            Programs
+          </button>
         </div>
       </div>
 
@@ -232,10 +381,12 @@ export default function EventsPage() {
       <div className="bg-white rounded-lg shadow p-3">
         <div className="flex items-center gap-2 mb-2">
           <Filter className="w-4 h-4 text-gray-600" />
-          <span className="text-sm font-medium text-gray-700">Filter Projects</span>
+          <span className="text-sm font-medium text-gray-700">
+            {activeTab === 'projects' ? 'Filter Projects' : 'Filter Programs'}
+          </span>
         </div>
         <div className="flex gap-2 overflow-x-auto">
-          {filters.map(filter => (
+          {(activeTab === 'projects' ? filters : fellowshipFilters).map(filter => (
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id)}
@@ -251,22 +402,26 @@ export default function EventsPage() {
         </div>
       </div>
 
-      {/* Projects Count */}
+      {/* Count */}
       <div className="px-1">
         <p className="text-sm text-gray-600">
-          {filteredEvents.length} {filteredEvents.length === 1 ? 'project' : 'projects'} found
+          {activeTab === 'projects' 
+            ? `${filteredEvents.length} ${filteredEvents.length === 1 ? 'project' : 'projects'} found`
+            : `${filteredFellowships.length} ${filteredFellowships.length === 1 ? 'program' : 'programs'} found`
+          }
         </p>
       </div>
 
-      {/* Projects List */}
+      {/* List */}
       <div className="space-y-4 pb-4">
-        {filteredEvents.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No projects found matching your criteria</p>
-          </div>
-        ) : (
-          filteredEvents.map((event) => {
+        {activeTab === 'projects' ? (
+          filteredEvents.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No projects found matching your criteria</p>
+            </div>
+          ) : (
+            filteredEvents.map((event) => {
             const moneyPercentage = Math.round((event.moneyRaised / event.moneyRequired) * 100);
             const membersPercentage = Math.round((event.membersJoined / event.membersRequired) * 100);
             
@@ -363,14 +518,118 @@ export default function EventsPage() {
               </div>
             );
           })
+        )
+        ) : (
+          filteredFellowships.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <GraduationCap className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No programs found matching your criteria</p>
+            </div>
+          ) : (
+            filteredFellowships.map((fellowship) => {
+              const IconComponent = fellowship.icon;
+              const positionsPercentage = Math.round((fellowship.positionsFilled / fellowship.positions) * 100);
+              
+              return (
+                <div key={fellowship.id} className="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+                  {/* Fellowship Header */}
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-12 h-12 bg-kanyini-primary bg-opacity-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <IconComponent className="w-6 h-6 text-kanyini-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">{fellowship.title}</h3>
+                      <p className="text-xs text-gray-500">{fellowship.organization}</p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-700 mb-3">{fellowship.description}</p>
+
+                  {/* Info Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Duration</p>
+                        <p className="text-sm font-medium text-gray-900">{fellowship.duration}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Location</p>
+                        <p className="text-sm font-medium text-gray-900 truncate">{fellowship.location}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Positions</p>
+                        <p className="text-sm font-medium text-gray-900">{fellowship.positionsFilled}/{fellowship.positions}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <p className="text-xs text-gray-500">Deadline</p>
+                        <p className="text-sm font-medium text-red-600">{fellowship.applicationDeadline}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stipend Badge */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full mb-3">
+                    <span className="text-sm font-semibold text-green-700">{fellowship.stipend}</span>
+                  </div>
+
+                  {/* Positions Progress */}
+                  <div className="mb-4">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-medium text-gray-700">Positions Filled</span>
+                      <span className="text-xs font-bold text-kanyini-primary">{positionsPercentage}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-kanyini-primary h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min(positionsPercentage, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Requirements */}
+                  <div className="mb-4">
+                    <p className="text-xs font-medium text-gray-700 mb-2">Requirements:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {fellowship.requirements.map((req, idx) => (
+                        <span key={idx} className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                          {req}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Action Button */}
+                  <button className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
+                    Apply Now
+                  </button>
+                </div>
+              );
+            })
+          )
         )}
       </div>
 
       {/* Call to Action */}
       <div className="bg-gradient-to-r from-kanyini-primary to-green-700 rounded-lg p-6 text-white text-center">
-        <h3 className="text-lg font-bold mb-2">Want to start a project?</h3>
+        <h3 className="text-lg font-bold mb-2">
+          {activeTab === 'projects' ? 'Want to start a project?' : 'Have questions about fellowships?'}
+        </h3>
         <p className="text-sm text-green-50 mb-4">
-          Partner with us to launch community projects and initiatives
+          {activeTab === 'projects' 
+            ? 'Partner with us to launch community projects and initiatives'
+            : 'Learn more about our fellowship programs and application process'
+          }
         </p>
         <button className="bg-white text-kanyini-primary px-6 py-2 rounded-lg font-medium hover:bg-green-50 transition">
           Contact Us

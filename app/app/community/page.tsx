@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MapPin, User, Search, Loader2, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, User, Search, Loader2, CheckCircle2, ChevronLeft, ChevronRight, Calendar, Clock, Users as UsersIcon, Filter } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface Alumni {
@@ -19,11 +19,27 @@ interface Alumni {
   courses: string[];
 }
 
+interface Event {
+  id: number;
+  title: string;
+  type: 'workshop' | 'meetup' | 'webinar' | 'conference' | 'social';
+  date: string;
+  time: string;
+  location: string;
+  attendees: number;
+  maxAttendees?: number;
+  description: string;
+  organizer: string;
+  isVirtual: boolean;
+}
+
 export default function MyCommunityPage() {
+  const [activeTab, setActiveTab] = useState<'events' | 'community'>('events');
   const [alumni, setAlumni] = useState<Alumni[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'skills' | 'location' | 'education' | 'work'>('all');
+  const [eventFilter, setEventFilter] = useState<'all' | 'workshop' | 'meetup' | 'webinar' | 'conference' | 'social' | 'virtual'>('all');
   const [filterValue, setFilterValue] = useState('');
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,7 +101,106 @@ export default function MyCommunityPage() {
     router.push(`/app/community/${alumniId}`);
   };
 
-  if (loading) {
+  // Events data
+  const events: Event[] = [
+    {
+      id: 1,
+      title: 'Community Networking Night',
+      type: 'social',
+      date: 'December 18, 2025',
+      time: '6:00 PM - 9:00 PM',
+      location: 'Nairobi City Hall',
+      attendees: 45,
+      maxAttendees: 80,
+      description: 'Join fellow community members for an evening of networking, food, and conversations about environmental action. A great opportunity to make new connections and share ideas.',
+      organizer: 'Sarah Mwangi',
+      isVirtual: false
+    },
+    {
+      id: 2,
+      title: 'Climate Action Workshop',
+      type: 'workshop',
+      date: 'December 22, 2025',
+      time: '10:00 AM - 2:00 PM',
+      location: 'Virtual (Zoom)',
+      attendees: 67,
+      maxAttendees: 100,
+      description: 'Interactive workshop on practical climate action strategies. Learn how to reduce your carbon footprint and engage your community in sustainability efforts.',
+      organizer: 'John Kariuki',
+      isVirtual: true
+    },
+    {
+      id: 3,
+      title: 'Monthly Community Meetup',
+      type: 'meetup',
+      date: 'January 5, 2026',
+      time: '3:00 PM - 5:00 PM',
+      location: 'Java House, Westlands',
+      attendees: 23,
+      maxAttendees: 40,
+      description: 'Casual monthly gathering to catch up with community members, share updates on projects, and discuss upcoming initiatives over coffee.',
+      organizer: 'Grace Wanjiru',
+      isVirtual: false
+    },
+    {
+      id: 4,
+      title: 'Environmental Leadership Webinar',
+      type: 'webinar',
+      date: 'January 12, 2026',
+      time: '2:00 PM - 4:00 PM',
+      location: 'Virtual (Teams)',
+      attendees: 89,
+      maxAttendees: 150,
+      description: 'Learn from experienced environmental leaders about building effective grassroots movements and scaling impact. Q&A session included.',
+      organizer: 'Emma Akinyi',
+      isVirtual: true
+    },
+    {
+      id: 5,
+      title: 'East Africa Climate Conference 2026',
+      type: 'conference',
+      date: 'February 15-17, 2026',
+      time: 'All Day',
+      location: 'KICC, Nairobi',
+      attendees: 234,
+      maxAttendees: 500,
+      description: '3-day conference bringing together climate activists, researchers, and policymakers from across East Africa. Includes keynotes, panels, and networking sessions.',
+      organizer: 'Kanyini Earth Project',
+      isVirtual: false
+    },
+    {
+      id: 6,
+      title: 'Youth Climate Forum',
+      type: 'meetup',
+      date: 'January 20, 2026',
+      time: '4:00 PM - 7:00 PM',
+      location: 'University of Nairobi',
+      attendees: 56,
+      maxAttendees: 100,
+      description: 'Forum for young environmental activists to share experiences, collaborate on projects, and build a stronger youth climate movement.',
+      organizer: 'Robert Otieno',
+      isVirtual: false
+    }
+  ];
+
+  const filteredEvents = events.filter(event => {
+    const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         event.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    let matchesFilter = true;
+    if (eventFilter === 'all') {
+      matchesFilter = true;
+    } else if (eventFilter === 'virtual') {
+      matchesFilter = event.isVirtual === true;
+    } else {
+      matchesFilter = event.type === eventFilter;
+    }
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  if (loading && activeTab === 'community') {
     return (
       <div className="p-4 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
@@ -98,8 +213,39 @@ export default function MyCommunityPage() {
 
   return (
     <div className="p-4 space-y-4">
-      {/* Verification Notice */}
-      {isVerified === false && (
+      {/* Header */}
+      <div className="bg-gradient-to-r from-kanyini-primary to-green-700 rounded-lg p-6 text-white">
+        <h1 className="text-2xl font-bold mb-2">Connect</h1>
+        <p className="text-green-50">{activeTab === 'events' ? 'Discover and join community events' : 'Connect with community members'}</p>
+      </div>
+
+      {/* Tabs */}
+      <div className="bg-white rounded-lg shadow">
+        <div className="flex">
+          <button
+            onClick={() => setActiveTab('events')}
+            className={`flex-1 py-3 text-sm font-semibold transition ${
+              activeTab === 'events'
+                ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                : 'text-gray-600 border-b-2 border-transparent'
+            }`}
+          >
+            Events
+          </button>
+          <button
+            onClick={() => setActiveTab('community')}
+            className={`flex-1 py-3 text-sm font-semibold transition ${
+              activeTab === 'community'
+                ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                : 'text-gray-600 border-b-2 border-transparent'
+            }`}
+          >
+            Community
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'community' && isVerified === false && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
           <p className="text-sm text-yellow-800">
             <strong>Account Not Verified:</strong> Contact details of other users are hidden. Please contact Admin to get verified and view contact details.
@@ -113,7 +259,7 @@ export default function MyCommunityPage() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
           type="text"
-          placeholder="Search by name, email, designation..."
+          placeholder={activeTab === 'events' ? 'Search events...' : 'Search by name, email, designation...'}
             value={searchQuery}
             onChange={handleSearch}
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
@@ -121,6 +267,41 @@ export default function MyCommunityPage() {
         </div>
       </div>
 
+      {/* Event Filters */}
+      {activeTab === 'events' && (
+        <div className="bg-white rounded-lg shadow p-3">
+          <div className="flex items-center gap-2 mb-2">
+            <Filter className="w-4 h-4 text-gray-600" />
+            <span className="text-sm font-medium text-gray-700">Filter Events</span>
+          </div>
+          <div className="flex gap-2 overflow-x-auto">
+            {[
+              { id: 'all', label: 'All' },
+              { id: 'workshop', label: 'Workshops' },
+              { id: 'meetup', label: 'Meetups' },
+              { id: 'webinar', label: 'Webinars' },
+              { id: 'conference', label: 'Conferences' },
+              { id: 'social', label: 'Social' },
+              { id: 'virtual', label: 'Virtual' }
+            ].map(filter => (
+              <button
+                key={filter.id}
+                onClick={() => setEventFilter(filter.id as any)}
+                className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
+                  eventFilter === filter.id
+                    ? 'bg-kanyini-primary text-white border-kanyini-primary'
+                    : 'border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'community' && (
+      <>
       {/* Filters */}
       <div className="bg-white rounded-lg shadow p-3">
         <div className="flex gap-2 overflow-x-auto">
@@ -353,6 +534,110 @@ export default function MyCommunityPage() {
           >
             <ChevronRight className="w-5 h-5" />
           </button>
+        </div>
+      )}
+      </>
+      )}
+
+      {/* Events List */}
+      {activeTab === 'events' && (
+        <div className="space-y-4 pb-4">
+          {filteredEvents.length === 0 ? (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No events found</p>
+            </div>
+          ) : (
+            filteredEvents.map((event) => (
+              <div key={event.id} className="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
+                {/* Event Header */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">{event.title}</h3>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        event.type === 'workshop' ? 'bg-purple-100 text-purple-700' :
+                        event.type === 'meetup' ? 'bg-blue-100 text-blue-700' :
+                        event.type === 'webinar' ? 'bg-green-100 text-green-700' :
+                        event.type === 'conference' ? 'bg-red-100 text-red-700' :
+                        'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                      </span>
+                      {event.isVirtual && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">
+                          Virtual
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p className="text-sm text-gray-700 mb-3">{event.description}</p>
+
+                {/* Event Details Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div className="flex items-start gap-2">
+                    <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Date</p>
+                      <p className="text-sm font-medium text-gray-900">{event.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Clock className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Time</p>
+                      <p className="text-sm font-medium text-gray-900">{event.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Location</p>
+                      <p className="text-sm font-medium text-gray-900">{event.location}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <User className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Organizer</p>
+                      <p className="text-sm font-medium text-gray-900">{event.organizer}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Attendees Progress */}
+                {event.maxAttendees && (
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <UsersIcon className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">
+                          {event.attendees} / {event.maxAttendees} attending
+                        </span>
+                      </div>
+                      <span className="text-xs font-medium text-kanyini-primary">
+                        {Math.round((event.attendees / event.maxAttendees) * 100)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-kanyini-primary h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min((event.attendees / event.maxAttendees) * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {/* RSVP Button */}
+                <button className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
+                  RSVP to Event
+                </button>
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
