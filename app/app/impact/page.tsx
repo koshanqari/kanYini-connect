@@ -289,18 +289,6 @@ export default function ImpactDashboardPage() {
           </div>
         </div>
       </div>
-
-      {/* Call to Action */}
-      <div className="bg-gradient-to-r from-kanyini-primary to-green-700 rounded-lg p-6 text-white text-center">
-        <Heart className="w-12 h-12 mx-auto mb-3 opacity-90" />
-        <h3 className="text-lg font-bold mb-2">Join Our Impact Story</h3>
-        <p className="text-sm text-green-50 mb-4">
-          Every action counts. Start contributing to projects today and be part of the change.
-        </p>
-        <button className="bg-white text-kanyini-primary px-6 py-2 rounded-lg font-medium hover:bg-green-50 transition">
-          Get Involved
-        </button>
-      </div>
     </div>
   );
 }
