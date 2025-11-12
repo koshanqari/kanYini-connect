@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Users, Heart, MessageCircle, Share2, Play } from 'lucide-react';
+import { MapPin, Users, Heart, MessageCircle, Share2, Play, Headphones, FileText } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -8,7 +8,7 @@ interface Post {
   id: number;
   projectId: number;
   projectName: string;
-  type: 'text' | 'photo' | 'video';
+  type: 'text' | 'photo' | 'video' | 'podcast' | 'article';
   content: string;
   author: string;
   authorRole: string;
@@ -17,6 +17,11 @@ interface Post {
   comments: number;
   mediaUrl?: string;
   videoThumbnail?: string;
+  podcastUrl?: string;
+  podcastDuration?: string;
+  articleUrl?: string;
+  articleTitle?: string;
+  articleExcerpt?: string;
 }
 
 interface NewProject {
@@ -101,6 +106,66 @@ export default function FeedPage() {
       timestamp: '2 days ago',
       likes: 198,
       comments: 37
+    },
+    {
+      id: 6,
+      projectId: 1,
+      projectName: 'Clean Water for Rural Communities',
+      type: 'podcast',
+      content: 'Watch our latest video podcast episode featuring community leaders discussing water access challenges and solutions in rural Kenya.',
+      author: 'Sarah Mwangi',
+      authorRole: 'Project Lead',
+      timestamp: '3 days ago',
+      likes: 89,
+      comments: 24,
+      podcastUrl: 'https://example.com/podcast1',
+      podcastDuration: '45 min',
+      videoThumbnail: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80'
+    },
+    {
+      id: 7,
+      projectId: 2,
+      projectName: 'Indigenous Knowledge Documentation',
+      type: 'article',
+      content: 'Read our comprehensive article on sustainable water management practices and their impact on rural communities.',
+      author: 'Emma Akinyi',
+      authorRole: 'Research Coordinator',
+      timestamp: '1 week ago',
+      likes: 156,
+      comments: 42,
+      articleUrl: 'https://example.com/article1',
+      articleTitle: 'Sustainable Water Management in Rural Kenya',
+      articleExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...'
+    },
+    {
+      id: 8,
+      projectId: 3,
+      projectName: 'Coastal Ecosystem Restoration',
+      type: 'podcast',
+      content: 'Video podcast: Marine biologists discuss the impact of plastic pollution on coastal ecosystems and restoration strategies.',
+      author: 'John Kariuki',
+      authorRole: 'Marine Conservationist',
+      timestamp: '1 week ago',
+      likes: 178,
+      comments: 45,
+      podcastUrl: 'https://example.com/podcast3',
+      podcastDuration: '52 min',
+      videoThumbnail: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=800&q=80'
+    },
+    {
+      id: 9,
+      projectId: 4,
+      projectName: 'Youth Environmental Leadership Program',
+      type: 'article',
+      content: 'Exploring the role of youth leadership in driving climate action and building sustainable communities.',
+      author: 'David Ochieng',
+      authorRole: 'Youth Engagement Lead',
+      timestamp: '2 weeks ago',
+      likes: 189,
+      comments: 52,
+      articleUrl: 'https://example.com/article4',
+      articleTitle: 'Empowering the Next Generation of Climate Leaders',
+      articleExcerpt: 'How youth-led initiatives are transforming environmental advocacy and creating lasting change...'
     }
   ];
 
@@ -134,14 +199,24 @@ export default function FeedPage() {
     }
   ];
 
-  const filters = ['all', 'posts', 'new projects'];
+  const filters = ['all', 'posts', 'podcasts', 'articles', 'new projects'];
 
   // Combine and filter feed items
   const getFeedItems = () => {
-    if (activeFilter === 'posts') return feedPosts.map(p => ({ type: 'post' as const, data: p }));
-    if (activeFilter === 'new projects') return newProjects.map(p => ({ type: 'project' as const, data: p }));
+    if (activeFilter === 'posts') {
+      return feedPosts.filter(p => ['text', 'photo', 'video'].includes(p.type)).map(p => ({ type: 'post' as const, data: p }));
+    }
+    if (activeFilter === 'podcasts') {
+      return feedPosts.filter(p => p.type === 'podcast').map(p => ({ type: 'post' as const, data: p }));
+    }
+    if (activeFilter === 'articles') {
+      return feedPosts.filter(p => p.type === 'article').map(p => ({ type: 'post' as const, data: p }));
+    }
+    if (activeFilter === 'new projects') {
+      return newProjects.map(p => ({ type: 'project' as const, data: p }));
+    }
     
-    // Mix posts and projects for 'all' filter
+    // Mix all content for 'all' filter
     const items: Array<{ type: 'post' | 'project', data: Post | NewProject }> = [];
     feedPosts.forEach(post => items.push({ type: 'post', data: post }));
     newProjects.forEach(project => items.push({ type: 'project', data: project }));
@@ -163,7 +238,7 @@ export default function FeedPage() {
           </div>
           <div>
             <div className="text-2xl font-bold">{feedPosts.length}</div>
-            <div className="text-xs text-green-100">New Updates</div>
+            <div className="text-xs text-green-100">Total Updates</div>
           </div>
           <div>
             <div className="text-2xl font-bold">{newProjects.length}</div>
@@ -244,6 +319,89 @@ export default function FeedPage() {
                       <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
                         <Play className="w-8 h-8 text-kanyini-primary ml-1" />
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Podcast */}
+                {post.type === 'podcast' && (
+                  <div className="px-4 pb-4">
+                    {post.videoThumbnail ? (
+                      <div 
+                        className="relative cursor-pointer"
+                        onClick={() => window.open(post.podcastUrl, '_blank')}
+                      >
+                        <img
+                          src={post.videoThumbnail}
+                          alt="Podcast thumbnail"
+                          className="w-full h-64 object-cover rounded-lg"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+                          <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                            <Play className="w-8 h-8 text-kanyini-primary ml-1" />
+                          </div>
+                        </div>
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <div className="bg-white bg-opacity-90 rounded-lg p-2 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Headphones className="w-4 h-4 text-gray-600" />
+                              <span className="text-xs font-medium text-gray-900">Video Podcast</span>
+                            </div>
+                            {post.podcastDuration && (
+                              <span className="text-xs text-gray-600">{post.podcastDuration}</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <Headphones className="w-6 h-6 text-gray-600" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-gray-900">Podcast Episode</p>
+                            {post.podcastDuration && (
+                              <p className="text-xs text-gray-500">{post.podcastDuration}</p>
+                            )}
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => window.open(post.podcastUrl, '_blank')}
+                          className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
+                        >
+                          <Play className="w-4 h-4" />
+                          Listen Now
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Article */}
+                {post.type === 'article' && (
+                  <div className="px-4 pb-4">
+                    <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <FileText className="w-6 h-6 text-gray-600" />
+                        </div>
+                        <div className="flex-1">
+                          {post.articleTitle && (
+                            <h5 className="text-sm font-bold text-gray-900 mb-1">{post.articleTitle}</h5>
+                          )}
+                          {post.articleExcerpt && (
+                            <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.articleExcerpt}</p>
+                          )}
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => window.open(post.articleUrl, '_blank')}
+                        className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
+                      >
+                        <FileText className="w-4 h-4" />
+                        Read Article
+                      </button>
                     </div>
                   </div>
                 )}
