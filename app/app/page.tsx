@@ -681,6 +681,23 @@ export default function MyProfilePage() {
         )}
       </div>
 
+      {/* Intellsys Section */}
+      <a 
+        href="https://www.intellsys.ai/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="block bg-white rounded-lg shadow p-10 mb-4 hover:shadow-lg transition-shadow cursor-pointer"
+      >
+        <h3 className="text-lg font-semibold text-center mb-3">Secured by</h3>
+        <div className="flex justify-center items-center py-4 px-4">
+          <img 
+            src="https://iba-consulting-prod.b-cdn.net/footer/gj-logos/Intellsys2.png" 
+            alt="Intellsys" 
+            className="max-w-full h-auto"
+          />
+        </div>
+      </a>
+
       {/* Edit Modals */}
       
       {/* Edit Profile Header (Name + Photo) */}
