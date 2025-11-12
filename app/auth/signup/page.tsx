@@ -93,12 +93,12 @@ export default function SignupPage() {
         <div className="flex flex-col items-center mb-4 sm:mb-6">
           <div className="mb-2 sm:mb-4">
             <img 
-              src="https://icmhs.co.ke/wp-content/uploads/2022/07/ICMHS_new_logo-without-any-background.png" 
-              alt="ICMHS" 
+              src="https://keaprojects.com.au/wp-content/uploads/2025/06/KEaP-Logo-v5-1024x846.webp" 
+              alt="Kanyini Earth Project" 
               className="h-12 sm:h-16 w-auto object-contain"
             />
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-center">Alumni Portal</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-center">Kanyini Connect</h1>
         </div>
         <p className="text-gray-600 text-center mb-4 sm:mb-8 text-sm sm:text-base">Sign up for access</p>
 
@@ -113,7 +113,7 @@ export default function SignupPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
               placeholder="Your full name"
             />
           </div>
@@ -132,7 +132,7 @@ export default function SignupPage() {
                 setSuccess('');
               }}
               required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
               placeholder="your@email.com"
             />
           </div>
@@ -159,7 +159,7 @@ export default function SignupPage() {
                 type="button"
                 onClick={handleRequestOTP}
                 disabled={requestingOTP || !email}
-                className="flex-1 min-w-0 px-2 sm:px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm whitespace-nowrap"
+                className="flex-1 min-w-0 px-2 sm:px-4 py-2 bg-kanyini-primary text-white rounded-md hover:bg-green-700 transition disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm whitespace-nowrap"
               >
                 {requestingOTP ? 'Sending...' : 'Request OTP'}
               </button>
@@ -186,7 +186,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+            className="w-full bg-kanyini-primary text-white py-2 rounded-md hover:bg-green-700 transition disabled:opacity-50"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
@@ -194,7 +194,7 @@ export default function SignupPage() {
           <div className="text-center pt-2 sm:pt-4">
             <p className="text-xs sm:text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/auth/login" className="text-blue-600 hover:underline font-medium">
+              <Link href="/auth/login" className="text-kanyini-primary hover:underline font-medium">
                 Sign In
               </Link>
             </p>

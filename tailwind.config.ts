@@ -7,7 +7,15 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'kanyini': {
+          'primary': '#597242',
+          'secondary': '#3f3f44',
+          'accent': '#597242',
+        },
+      },
+    },
   },
   plugins: [],
 };

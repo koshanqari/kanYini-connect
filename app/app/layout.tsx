@@ -3,6 +3,8 @@
 import BottomNav from '@/components/BottomNav';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { MessageCircle, Bell } from 'lucide-react';
 
 export default function MainLayout({
   children,
@@ -23,11 +25,6 @@ export default function MainLayout({
     setLoading(false);
   }, [router]);
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    localStorage.removeItem('user');
-    router.push('/auth/login');
-  };
 
   if (loading) {
     return (
@@ -46,22 +43,28 @@ export default function MainLayout({
         <div className="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img 
-              src="https://icmhs.co.ke/wp-content/uploads/2022/07/ICMHS_new_logo-without-any-background.png" 
-              alt="ICMHS" 
+              src="https://keaprojects.com.au/wp-content/uploads/2025/06/KEaP-Logo-v5-1024x846.webp" 
+              alt="Kanyini Earth Project" 
               className="h-10 w-auto object-contain"
             />
-            <span className="text-lg font-semibold text-gray-800">Alumni Portal</span>
+            <span className="text-lg font-semibold text-kanyini-primary">Kanyini Connect</span>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600 hidden sm:inline">
-              {user?.email}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="text-sm text-gray-600 hover:text-red-600 transition"
+          <div className="flex items-center gap-2">
+            <Link
+              href="/app/notifications"
+              className="p-2 text-gray-600 hover:text-kanyini-primary hover:bg-gray-100 rounded-full transition"
+              title="Notifications"
             >
-              Logout
-            </button>
+              <Bell className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/app/messages"
+              className="flex items-center gap-2 px-4 py-2 bg-kanyini-primary text-white rounded-lg hover:bg-green-700 transition font-medium text-sm"
+              title="Messages"
+            >
+              <MessageCircle className="w-5 h-5" />
+              <span className="hidden sm:inline">Messages</span>
+            </Link>
           </div>
         </div>
       </header>

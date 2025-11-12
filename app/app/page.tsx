@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { User, Plus, Mail, Phone, Clock, MessageCircle, Link as LinkIcon, MapPin, Briefcase, GraduationCap, Edit2, Trash2, CheckCircle2, Loader2 } from 'lucide-react';
+import { User, Plus, Mail, Phone, Clock, MessageCircle, Link as LinkIcon, MapPin, Briefcase, GraduationCap, Edit2, Trash2, CheckCircle2, Loader2, LogOut } from 'lucide-react';
 import EditModal from '@/components/EditModal';
 import SearchableSelect from '@/components/SearchableSelect';
 import { Country, State, City } from 'country-state-city';
+import { useRouter } from 'next/navigation';
 
 export default function MyProfilePage() {
   const [profileData, setProfileData] = useState<any>(null);
@@ -15,6 +16,7 @@ export default function MyProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [allSkills, setAllSkills] = useState<any[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     fetchProfile();
@@ -51,6 +53,15 @@ export default function MyProfilePage() {
       }
     } catch (error) {
       console.error('Failed to fetch skills:', error);
+    }
+  };
+
+  const handleLogout = async () => {
+    if (confirm('Are you sure you want to logout?')) {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      router.push('/auth/login');
     }
   };
 
@@ -234,7 +245,7 @@ export default function MyProfilePage() {
     <div className="p-4 space-y-4">
       {/* Profile Header Card - LinkedIn Style */}
       <div className="bg-white rounded-lg shadow">
-        <div className="h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-lg"></div>
+        <div className="h-20 bg-gradient-to-r from-kanyini-primary to-green-700 rounded-t-lg"></div>
         <div className="px-4 pb-4">
           <div className="flex items-end -mt-12 mb-4 justify-between">
             <div className="w-24 h-24 bg-gray-300 rounded-full border-4 border-white flex items-center justify-center overflow-hidden">
@@ -269,7 +280,7 @@ export default function MyProfilePage() {
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold text-gray-900">{profile?.name || 'Add your name'}</h2>
             {profile?.is_verified && (
-              <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
+              <div className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-kanyini-primary rounded-full">
                 <CheckCircle2 className="w-4 h-4" />
                 <span className="text-xs font-medium">Verified</span>
               </div>
@@ -313,7 +324,7 @@ export default function MyProfilePage() {
             <p className="text-sm text-gray-500">Add a bio to tell the community about yourself</p>
             <button 
               onClick={() => openEditModal('about', { about: '' })}
-              className="mt-2 text-sm text-blue-600 hover:underline flex items-center gap-1"
+              className="mt-2 text-sm text-kanyini-primary hover:underline flex items-center gap-1"
             >
               <Plus className="w-4 h-4" />
               Add about
@@ -388,7 +399,7 @@ export default function MyProfilePage() {
                           href={url.startsWith('http') ? url : `https://${url}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-sm text-blue-600 hover:underline block"
+                          className="text-sm text-kanyini-primary hover:underline block"
                         >
                           {text}
                         </a>
@@ -410,7 +421,7 @@ export default function MyProfilePage() {
                 preferred_way_to_connect: profile?.preferred_way_to_connect || '',
                 social_media_links: profile?.social_media_links || ''
               })}
-              className="text-sm text-blue-600 hover:underline flex items-center gap-1 mt-2"
+              className="text-sm text-kanyini-primary hover:underline flex items-center gap-1 mt-2"
             >
               <Plus className="w-4 h-4" />
               Add Details
@@ -437,7 +448,7 @@ export default function MyProfilePage() {
         ) : (
           <button 
             onClick={() => openEditModal('expertise', { my_expertise: '' })}
-            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            className="text-sm text-kanyini-primary hover:underline flex items-center gap-1"
           >
             <Plus className="w-4 h-4" />
             Add Details
@@ -528,7 +539,7 @@ export default function MyProfilePage() {
               selectedCountryCode: '',
               selectedStateCode: ''
             })}
-            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            className="text-sm text-kanyini-primary hover:underline flex items-center gap-1"
           >
             <Plus className="w-4 h-4" />
             Add Details
@@ -583,7 +594,7 @@ export default function MyProfilePage() {
                         {edu.description && (
                           <p className="text-sm text-gray-600 mt-2">{edu.description}</p>
                         )}
-                        <span className="inline-block mt-2 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">
+                        <span className="inline-block mt-2 px-2 py-1 bg-green-50 text-green-700 text-xs rounded">
                           {edu.type === 'education' ? 'Education' : 'Certificate'}
                         </span>
                       </div>
@@ -612,7 +623,7 @@ export default function MyProfilePage() {
               is_present: false,
               description: ''
             })}
-            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            className="text-sm text-kanyini-primary hover:underline flex items-center gap-1"
           >
             <Plus className="w-4 h-4" />
             Add Details
@@ -673,12 +684,23 @@ export default function MyProfilePage() {
         ) : (
           <button
             onClick={() => openEditModal('skills', { selectedSkill: '', newSkillName: '' })}
-            className="text-sm text-blue-600 hover:underline flex items-center gap-1"
+            className="text-sm text-kanyini-primary hover:underline flex items-center gap-1"
           >
             <Plus className="w-4 h-4" />
             Add Details
           </button>
         )}
+      </div>
+
+      {/* Logout Button */}
+      <div className="bg-white rounded-lg shadow p-4 mb-4">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition font-medium"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
       </div>
 
       {/* Intellsys Section */}
@@ -721,7 +743,7 @@ export default function MyProfilePage() {
               value={editValues.name || ''}
               onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
               placeholder="Your full name"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
             />
           </div>
           <div>
@@ -735,7 +757,7 @@ export default function MyProfilePage() {
                 <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition">
                   {uploading ? (
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Loader2 className="w-8 h-8 text-blue-600 animate-spin mb-2" />
+                      <Loader2 className="w-8 h-8 text-kanyini-primary animate-spin mb-2" />
                       <p className="text-sm text-gray-600">Uploading...</p>
                     </div>
                   ) : previewUrl || editValues.profile_picture_url ? (
@@ -782,7 +804,7 @@ export default function MyProfilePage() {
           value={editValues.about || ''}
           onChange={(e) => setEditValues({ ...editValues, about: e.target.value })}
           placeholder="Write about yourself..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[150px]"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary min-h-[150px]"
           rows={6}
         />
       </EditModal>
@@ -818,7 +840,7 @@ export default function MyProfilePage() {
                 value={editValues.phone || ''}
                 onChange={(e) => setEditValues({ ...editValues, phone: e.target.value })}
                 placeholder="+254-712345678"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
               />
             </div>
             <div>
@@ -829,7 +851,7 @@ export default function MyProfilePage() {
                 value={editValues.preferred_time_to_connect || ''}
                 onChange={(e) => setEditValues({ ...editValues, preferred_time_to_connect: e.target.value })}
                 placeholder="e.g., Weekday evenings after 6 PM"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
                 rows={2}
               />
             </div>
@@ -841,7 +863,7 @@ export default function MyProfilePage() {
                 value={editValues.preferred_way_to_connect || ''}
                 onChange={(e) => setEditValues({ ...editValues, preferred_way_to_connect: e.target.value })}
                 placeholder="e.g., Email or WhatsApp preferred"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
                 rows={2}
               />
             </div>
@@ -853,7 +875,7 @@ export default function MyProfilePage() {
                 <button
                   type="button"
                   onClick={addLink}
-                  className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
+                  className="flex items-center gap-1 text-sm text-kanyini-primary hover:text-green-700"
                 >
                   <Plus className="w-4 h-4" />
                   Add Link
@@ -871,14 +893,14 @@ export default function MyProfilePage() {
                         value={link.text || ''}
                         onChange={(e) => updateLink(index, 'text', e.target.value)}
                         placeholder="Text (e.g., LinkedIn)"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-sm"
                       />
                       <input
                         type="text"
                         value={link.url || ''}
                         onChange={(e) => updateLink(index, 'url', e.target.value)}
                         placeholder="URL (e.g., linkedin.com/in/username)"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-sm"
                       />
                     </div>
                     {(editValues.linksArray && editValues.linksArray.length > 1) && (
@@ -909,7 +931,7 @@ export default function MyProfilePage() {
           value={editValues.my_expertise || ''}
           onChange={(e) => setEditValues({ ...editValues, my_expertise: e.target.value })}
           placeholder="e.g., I am working in Saudi in petroleum industry. Can help with oil & gas sector career guidance..."
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[150px]"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary min-h-[150px]"
           rows={6}
         />
       </EditModal>
@@ -974,7 +996,7 @@ export default function MyProfilePage() {
               value={editValues.designation || ''}
               onChange={(e) => setEditValues({ ...editValues, designation: e.target.value })}
               placeholder="e.g., Software Engineer"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
               required
             />
           </div>
@@ -988,7 +1010,7 @@ export default function MyProfilePage() {
               value={editValues.company_name || ''}
               onChange={(e) => setEditValues({ ...editValues, company_name: e.target.value })}
               placeholder="e.g., Google"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
               required
             />
           </div>
@@ -1002,7 +1024,7 @@ export default function MyProfilePage() {
               value={editValues.industry || ''}
               onChange={(e) => setEditValues({ ...editValues, industry: e.target.value })}
               placeholder="e.g., Technology, Healthcare, Finance"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
             />
           </div>
 
@@ -1014,7 +1036,7 @@ export default function MyProfilePage() {
               type="month"
               value={editValues.start_date || ''}
               onChange={(e) => setEditValues({ ...editValues, start_date: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base appearance-none bg-white"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base appearance-none bg-white"
               style={{ 
                 minHeight: '48px',
                 lineHeight: '1.5'
@@ -1032,7 +1054,7 @@ export default function MyProfilePage() {
               value={editValues.end_date || ''}
               onChange={(e) => setEditValues({ ...editValues, end_date: e.target.value })}
               disabled={editValues.is_present}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 text-base appearance-none bg-white"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary disabled:bg-gray-100 disabled:text-gray-500 text-base appearance-none bg-white"
               style={{ 
                 minHeight: '48px',
                 lineHeight: '1.5'
@@ -1046,7 +1068,7 @@ export default function MyProfilePage() {
               id="is_present"
               checked={editValues.is_present || false}
               onChange={(e) => setEditValues({ ...editValues, is_present: e.target.checked, end_date: e.target.checked ? '' : editValues.end_date })}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-kanyini-primary border-gray-300 rounded focus:ring-kanyini-primary"
             />
             <label htmlFor="is_present" className="ml-2 text-sm text-gray-700">
               I currently work here
@@ -1134,7 +1156,7 @@ export default function MyProfilePage() {
               value={editValues.description || ''}
               onChange={(e) => setEditValues({ ...editValues, description: e.target.value })}
               placeholder="Describe your role and responsibilities..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
               rows={4}
             />
           </div>
@@ -1238,7 +1260,7 @@ export default function MyProfilePage() {
                   value="education"
                   checked={editValues.type === 'education'}
                   onChange={(e) => setEditValues({ ...editValues, type: e.target.value, school: editValues.type === 'certificate' ? '' : editValues.school })}
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-kanyini-primary"
                 />
                 <span className="ml-2 text-sm text-gray-700">Education</span>
               </label>
@@ -1248,7 +1270,7 @@ export default function MyProfilePage() {
                   value="certificate"
                   checked={editValues.type === 'certificate'}
                   onChange={(e) => setEditValues({ ...editValues, type: e.target.value, school: '' })}
-                  className="w-4 h-4 text-blue-600"
+                  className="w-4 h-4 text-kanyini-primary"
                 />
                 <span className="ml-2 text-sm text-gray-700">Certificate</span>
               </label>
@@ -1266,7 +1288,7 @@ export default function MyProfilePage() {
                 value={editValues.school || ''}
                 onChange={(e) => setEditValues({ ...editValues, school: e.target.value })}
                 placeholder="e.g., Harvard University"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
                 required={editValues.type === 'education'}
               />
             </div>
@@ -1281,7 +1303,7 @@ export default function MyProfilePage() {
               value={editValues.course || ''}
               onChange={(e) => setEditValues({ ...editValues, course: e.target.value })}
               placeholder="e.g., Computer Science"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
               required
             />
           </div>
@@ -1295,7 +1317,7 @@ export default function MyProfilePage() {
               value={editValues.degree_or_certificate_name || ''}
               onChange={(e) => setEditValues({ ...editValues, degree_or_certificate_name: e.target.value })}
               placeholder={editValues.type === 'education' ? 'e.g., Bachelor of Science' : 'e.g., AWS Certified Solutions Architect'}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
               required
             />
           </div>
@@ -1310,7 +1332,7 @@ export default function MyProfilePage() {
               onChange={(e) => setEditValues({ ...editValues, start_date: e.target.value })}
               placeholder="YYYY (e.g., 2015)"
               maxLength={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
             />
           </div>
           
@@ -1325,7 +1347,7 @@ export default function MyProfilePage() {
               disabled={editValues.is_present}
               placeholder="YYYY (e.g., 2019)"
               maxLength={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary disabled:bg-gray-100 disabled:text-gray-500 text-base"
             />
           </div>
 
@@ -1335,7 +1357,7 @@ export default function MyProfilePage() {
               id="edu_is_present"
               checked={editValues.is_present || false}
               onChange={(e) => setEditValues({ ...editValues, is_present: e.target.checked, end_date: e.target.checked ? '' : editValues.end_date })}
-              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-4 h-4 text-kanyini-primary border-gray-300 rounded focus:ring-kanyini-primary"
             />
             <label htmlFor="edu_is_present" className="ml-2 text-sm text-gray-700">
               Currently studying
@@ -1350,7 +1372,7 @@ export default function MyProfilePage() {
               value={editValues.description || ''}
               onChange={(e) => setEditValues({ ...editValues, description: e.target.value })}
               placeholder="Describe what you learned, achievements, etc..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
               rows={4}
             />
           </div>
@@ -1472,7 +1494,7 @@ export default function MyProfilePage() {
               value={editValues.newSkillName || ''}
               onChange={(e) => setEditValues({ ...editValues, newSkillName: e.target.value, selectedSkill: '' })}
               placeholder="e.g., React, Python, Leadership"
-              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+              className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-base"
             />
             <p className="text-xs text-gray-500 mt-1">
               Enter a skill that's not in the list above

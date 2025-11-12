@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Alumni Portal",
-  description: "Connect with your alumni community",
+  title: "Kanyini Connect",
+  description: "Join Kanyini Earth Project - Connect with changemakers and make a difference",
 };
 
 export const viewport: Viewport = {

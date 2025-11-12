@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { User, Users, PlusCircle, Bell, Briefcase } from 'lucide-react';
+import { User, Users, Newspaper, FolderKanban, TrendingUp } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -10,9 +10,9 @@ export default function BottomNav() {
   const navItems = [
     { name: 'Profile', href: '/app', Icon: User, active: true },
     { name: 'Community', href: '/app/community', Icon: Users, active: true },
-    { name: 'Post', href: '/app/post', Icon: PlusCircle, active: false },
-    { name: 'Notification', href: '/app/notifications', Icon: Bell, active: false },
-    { name: 'Jobs', href: '/app/jobs', Icon: Briefcase, active: false },
+    { name: 'Feed', href: '/app/jobs', Icon: Newspaper, active: true },
+    { name: 'Projects', href: '/app/post', Icon: FolderKanban, active: true },
+    { name: 'Impact', href: '/app/impact', Icon: TrendingUp, active: true },
   ];
 
   return (
@@ -27,17 +27,12 @@ export default function BottomNav() {
               href={item.active ? item.href : '#'}
               className={`flex flex-col items-center justify-center flex-1 h-full relative ${
                 isActive
-                  ? 'text-blue-600'
+                  ? 'text-kanyini-primary'
                   : item.active
                   ? 'text-gray-600 hover:text-gray-900'
                   : 'text-gray-400 cursor-not-allowed'
               }`}
             >
-              {!item.active && (
-                <span className="absolute top-1 right-1 text-[8px] bg-gray-200 text-gray-600 px-1 py-0.5 rounded">
-                  Soon
-                </span>
-              )}
               <Icon className="w-6 h-6 mb-1" />
               <span className="text-xs font-medium">{item.name}</span>
             </Link>

@@ -89,7 +89,7 @@ export default function MyCommunityPage() {
     return (
       <div className="p-4 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
+          <Loader2 className="w-8 h-8 text-kanyini-primary animate-spin mx-auto mb-2" />
           <p className="text-gray-600">Loading alumni...</p>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function MyCommunityPage() {
           placeholder="Search by name, email, designation..."
             value={searchQuery}
             onChange={handleSearch}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-kanyini-primary"
         />
         </div>
       </div>
@@ -131,7 +131,7 @@ export default function MyCommunityPage() {
             }}
             className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
               activeFilter === 'all'
-                ? 'bg-blue-600 text-white border-blue-600'
+                ? 'bg-kanyini-primary text-white border-kanyini-primary'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}
           >
@@ -141,7 +141,7 @@ export default function MyCommunityPage() {
             onClick={() => setActiveFilter('skills')}
             className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
               activeFilter === 'skills'
-                ? 'bg-blue-600 text-white border-blue-600'
+                ? 'bg-kanyini-primary text-white border-kanyini-primary'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}
           >
@@ -151,7 +151,7 @@ export default function MyCommunityPage() {
             onClick={() => setActiveFilter('location')}
             className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
               activeFilter === 'location'
-                ? 'bg-blue-600 text-white border-blue-600'
+                ? 'bg-kanyini-primary text-white border-kanyini-primary'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}
           >
@@ -161,7 +161,7 @@ export default function MyCommunityPage() {
             onClick={() => setActiveFilter('education')}
             className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
               activeFilter === 'education'
-                ? 'bg-blue-600 text-white border-blue-600'
+                ? 'bg-kanyini-primary text-white border-kanyini-primary'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}
           >
@@ -171,7 +171,7 @@ export default function MyCommunityPage() {
             onClick={() => setActiveFilter('work')}
             className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
               activeFilter === 'work'
-                ? 'bg-blue-600 text-white border-blue-600'
+                ? 'bg-kanyini-primary text-white border-kanyini-primary'
                 : 'border-gray-300 hover:bg-gray-50'
             }`}
           >
@@ -193,7 +193,7 @@ export default function MyCommunityPage() {
               }
               value={filterValue}
               onChange={(e) => setFilterValue(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-kanyini-primary text-sm"
             />
           </div>
         )}
@@ -227,7 +227,7 @@ export default function MyCommunityPage() {
           >
             <div className="flex items-start gap-3">
               {/* Avatar */}
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold flex-shrink-0 overflow-hidden">
+                <div className="w-14 h-14 bg-gradient-to-br from-kanyini-primary to-green-700 rounded-full flex items-center justify-center text-white text-xl font-bold flex-shrink-0 overflow-hidden">
                   {person.profile_picture_url ? (
                     <img
                       src={person.profile_picture_url}
@@ -247,7 +247,7 @@ export default function MyCommunityPage() {
                   </h3>
                   {person.is_verified && (
                     <span title="Verified">
-                      <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-kanyini-primary flex-shrink-0" />
                     </span>
                   )}
                 </div>
@@ -288,7 +288,7 @@ export default function MyCommunityPage() {
               </div>
 
               {/* Connect Button */}
-              <button className="px-4 py-1.5 text-sm border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50 transition whitespace-nowrap">
+              <button className="px-4 py-1.5 text-sm border border-kanyini-primary text-kanyini-primary rounded-full hover:bg-green-50 transition whitespace-nowrap">
                 View
               </button>
             </div>
@@ -332,7 +332,7 @@ export default function MyCommunityPage() {
                   disabled={loading}
                   className={`px-3 py-2 rounded-md border transition ${
                     currentPage === pageNum
-                      ? 'bg-blue-600 text-white border-blue-600'
+                      ? 'bg-kanyini-primary text-white border-kanyini-primary'
                       : 'border-gray-300 hover:bg-gray-50 text-gray-700'
                   } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
