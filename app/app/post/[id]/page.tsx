@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, Calendar, MapPin, Users, Heart, MessageCircle, Share2, Play, Image as ImageIcon, Headphones, FileText, QrCode, X } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Heart, MessageCircle, Share2, Play, Image as ImageIcon, Headphones, FileText, QrCode, X, Clock } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -23,11 +23,25 @@ interface Post {
   journalExcerpt?: string;
 }
 
+interface Event {
+  id: number;
+  title: string;
+  type: 'workshop' | 'meetup' | 'webinar' | 'conference' | 'social';
+  date: string;
+  time: string;
+  location: string;
+  attendees: number;
+  maxAttendees?: number;
+  description: string;
+  organizer: string;
+  isVirtual?: boolean;
+}
+
 export default function ProjectDetailPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
-  const [contentFilter, setContentFilter] = useState<'all' | 'posts' | 'podcasts' | 'journals'>('all');
+  const [contentFilter, setContentFilter] = useState<'all' | 'posts' | 'podcasts' | 'journals' | 'events'>('all');
   const [showQRCode, setShowQRCode] = useState(false);
   
   // Get the current URL for the QR code
@@ -832,16 +846,109 @@ export default function ProjectDetailPage() {
     ]
   };
 
-  const allPosts = projectPosts[projectId] || projectPosts['1'];
+  // Events for each project
+  const projectEvents: { [key: string]: Event[] } = {
+    '1': [
+      {
+        id: 1,
+        title: 'Water Well Installation Workshop',
+        type: 'workshop',
+        date: 'March 15, 2025',
+        time: '10:00 AM - 2:00 PM',
+        location: 'Community Center, Nairobi',
+        attendees: 45,
+        maxAttendees: 50,
+        description: 'Learn about sustainable water well installation techniques and maintenance. Hands-on training included.',
+        organizer: 'Sarah Mwangi',
+        isVirtual: false
+      },
+      {
+        id: 2,
+        title: 'Clean Water Initiative Meetup',
+        type: 'meetup',
+        date: 'March 22, 2025',
+        time: '6:00 PM - 8:00 PM',
+        location: 'Virtual',
+        attendees: 120,
+        description: 'Monthly meetup to discuss progress, challenges, and next steps for the clean water project.',
+        organizer: 'Project Team',
+        isVirtual: true
+      }
+    ],
+    '2': [
+      {
+        id: 3,
+        title: 'Indigenous Knowledge Documentation Conference',
+        type: 'conference',
+        date: 'April 5, 2025',
+        time: '9:00 AM - 5:00 PM',
+        location: 'Cultural Center, Nairobi',
+        attendees: 200,
+        maxAttendees: 250,
+        description: 'A full-day conference bringing together elders, researchers, and community members to document and preserve indigenous knowledge.',
+        organizer: 'Cultural Preservation Team',
+        isVirtual: false
+      }
+    ],
+    '3': [
+      {
+        id: 4,
+        title: 'Coastal Ecosystem Restoration Webinar',
+        type: 'webinar',
+        date: 'March 20, 2025',
+        time: '3:00 PM - 4:30 PM',
+        location: 'Virtual',
+        attendees: 85,
+        description: 'Learn about mangrove restoration techniques and their impact on coastal ecosystems.',
+        organizer: 'Marine Biology Team',
+        isVirtual: true
+      }
+    ],
+    '4': [
+      {
+        id: 5,
+        title: 'Youth Leadership Training Workshop',
+        type: 'workshop',
+        date: 'March 18, 2025',
+        time: '9:00 AM - 4:00 PM',
+        location: 'Youth Center, Nairobi',
+        attendees: 60,
+        maxAttendees: 60,
+        description: 'Intensive training session for young environmental leaders. Topics include project management, community engagement, and advocacy.',
+        organizer: 'Youth Program Coordinators',
+        isVirtual: false
+      }
+    ],
+    '5': [
+      {
+        id: 6,
+        title: 'Tree Planting Social Event',
+        type: 'social',
+        date: 'March 25, 2025',
+        time: '8:00 AM - 12:00 PM',
+        location: 'Urban Park, Nairobi',
+        attendees: 150,
+        description: 'Join us for a community tree planting event. Bring your family and friends!',
+        organizer: 'Urban Reforestation Team',
+        isVirtual: false
+      }
+    ]
+  };
 
-  // Filter posts based on contentFilter
+  const allPosts = projectPosts[projectId] || projectPosts['1'];
+  const allEvents = projectEvents[projectId] || projectEvents['1'] || [];
+
+  // Filter posts and events based on contentFilter
   const filteredPosts = allPosts.filter(post => {
     if (contentFilter === 'all') return true;
     if (contentFilter === 'posts') return ['text', 'photo', 'video'].includes(post.type);
     if (contentFilter === 'podcasts') return post.type === 'podcast';
     if (contentFilter === 'journals') return post.type === 'journal';
+    if (contentFilter === 'events') return false; // Posts are not events
     return true;
   });
+
+  const filteredEvents = contentFilter === 'all' || contentFilter === 'events' ? allEvents : [];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -1003,7 +1110,8 @@ export default function ProjectDetailPage() {
                 { id: 'all', label: 'All' },
                 { id: 'posts', label: 'Posts' },
                 { id: 'podcasts', label: 'Podcasts' },
-                { id: 'journals', label: 'Journals' }
+                { id: 'journals', label: 'Journals' },
+                { id: 'events', label: 'Events' }
               ].map(filter => (
                 <button
                   key={filter.id}
@@ -1020,7 +1128,15 @@ export default function ProjectDetailPage() {
             </div>
           </div>
           
-          {filteredPosts.map((post) => (
+          {/* Show empty state if no posts and events when filtered */}
+          {contentFilter !== 'events' && filteredPosts.length === 0 && filteredEvents.length === 0 && (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <p className="text-gray-500">No {contentFilter === 'all' ? 'content' : contentFilter} found</p>
+            </div>
+          )}
+
+          {/* Render Posts */}
+          {contentFilter !== 'events' && filteredPosts.map((post) => (
             <div key={post.id} className="bg-white rounded-lg shadow overflow-hidden">
               {/* Post Header */}
               <div className="p-4 flex items-start gap-3">
@@ -1163,6 +1279,107 @@ export default function ProjectDetailPage() {
               </div>
             </div>
           ))}
+
+          {/* Render Events */}
+          {filteredEvents.map((event) => (
+            <div key={`event-${event.id}`} className="bg-white rounded-lg shadow overflow-hidden">
+              {/* Event Header */}
+              <div className="flex items-start justify-between mb-3 p-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">{event.title}</h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      event.type === 'workshop' ? 'bg-purple-100 text-purple-700' :
+                      event.type === 'meetup' ? 'bg-blue-100 text-blue-700' :
+                      event.type === 'webinar' ? 'bg-green-100 text-green-700' :
+                      event.type === 'conference' ? 'bg-red-100 text-red-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                    </span>
+                    {event.isVirtual && (
+                      <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">
+                        Virtual
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="px-4 pb-3">
+                <p className="text-sm text-gray-700 mb-3">{event.description}</p>
+              </div>
+
+              {/* Event Details Grid */}
+              <div className="px-4 pb-3">
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div className="flex items-start gap-2">
+                    <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Date</p>
+                      <p className="text-sm font-medium text-gray-900">{event.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Clock className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Time</p>
+                      <p className="text-sm font-medium text-gray-900">{event.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Location</p>
+                      <p className="text-sm font-medium text-gray-900">{event.location}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Users className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Organizer</p>
+                      <p className="text-sm font-medium text-gray-900">{event.organizer}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Attendees Progress */}
+                {event.maxAttendees && (
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-600">
+                        {event.attendees} / {event.maxAttendees} attendees
+                      </span>
+                      <span className="text-xs text-gray-600">
+                        {Math.round((event.attendees / event.maxAttendees) * 100)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-kanyini-primary h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min((event.attendees / event.maxAttendees) * 100, 100)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* RSVP Button */}
+                <button
+                  className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm"
+                >
+                  RSVP to Event
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* Show empty state for events only */}
+          {contentFilter === 'events' && filteredEvents.length === 0 && (
+            <div className="bg-white rounded-lg shadow p-8 text-center">
+              <p className="text-gray-500">No events found</p>
+            </div>
+          )}
         </div>
 
       </div>
