@@ -19,7 +19,7 @@ export default function MyProfilePage() {
   const [activeTab, setActiveTab] = useState<'profile' | 'contribution'>('contribution');
   const [contributionSubTab, setContributionSubTab] = useState<'posts' | 'activity'>('posts');
   const [showContributionDetails, setShowContributionDetails] = useState(false);
-  const [postFilter, setPostFilter] = useState<'all' | 'podcasts' | 'articles'>('all');
+  const [postFilter, setPostFilter] = useState<'all' | 'podcasts' | 'journals'>('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -783,13 +783,13 @@ Join me in creating positive change! 🌍
               },
               {
                 id: 6,
-                type: 'article',
+                type: 'journal',
                 projectName: 'Indigenous Knowledge Documentation',
                 projectId: '2',
-                content: 'Read our comprehensive article on sustainable water management practices and their impact on rural communities.',
-                articleUrl: 'https://example.com/article1',
-                articleTitle: 'Sustainable Water Management in Rural Kenya',
-                articleExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...',
+                content: 'Read our comprehensive journal on sustainable water management practices and their impact on rural communities.',
+                journalUrl: 'https://example.com/journal1',
+                journalTitle: 'Sustainable Water Management in Rural Kenya',
+                journalExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...',
                 likes: 156,
                 comments: 42,
                 shares: 28,
@@ -801,7 +801,7 @@ Join me in creating positive change! 🌍
             const filteredPosts = allPosts.filter(post => {
               if (postFilter === 'all') return true;
               if (postFilter === 'podcasts') return post.type === 'podcast';
-              if (postFilter === 'articles') return post.type === 'article';
+              if (postFilter === 'journals') return post.type === 'journal';
               return true;
             });
 
@@ -813,11 +813,11 @@ Join me in creating positive change! 🌍
                     {[
                       { id: 'all', label: 'All' },
                       { id: 'podcasts', label: 'Podcasts' },
-                      { id: 'articles', label: 'Articles' }
+                      { id: 'journals', label: 'Journals' }
                     ].map(filter => (
                       <button
                         key={filter.id}
-                        onClick={() => setPostFilter(filter.id as 'all' | 'podcasts' | 'articles')}
+                        onClick={() => setPostFilter(filter.id as 'all' | 'podcasts' | 'journals')}
                         className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
                           postFilter === filter.id
                             ? 'bg-kanyini-primary text-white border-kanyini-primary'
@@ -909,28 +909,28 @@ Join me in creating positive change! 🌍
                           </div>
                         )}
 
-                        {/* Article */}
-                        {post.type === 'article' && (
+                        {/* Journal */}
+                        {post.type === 'journal' && (
                           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-3">
                             <div className="flex items-start gap-3 mb-3">
                               <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <FileText className="w-6 h-6 text-gray-600" />
                               </div>
                               <div className="flex-1">
-                                {post.articleTitle && (
-                                  <h5 className="text-sm font-bold text-gray-900 mb-1">{post.articleTitle}</h5>
+                                {post.journalTitle && (
+                                  <h5 className="text-sm font-bold text-gray-900 mb-1">{post.journalTitle}</h5>
                                 )}
-                                {post.articleExcerpt && (
-                                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.articleExcerpt}</p>
+                                {post.journalExcerpt && (
+                                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.journalExcerpt}</p>
                                 )}
                               </div>
                             </div>
                             <button 
-                              onClick={() => window.open(post.articleUrl, '_blank')}
+                              onClick={() => window.open(post.journalUrl, '_blank')}
                               className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
                             >
                               <FileText className="w-4 h-4" />
-                              Read Article
+                              Read Journal
                             </button>
                           </div>
                         )}

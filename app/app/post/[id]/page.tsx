@@ -7,7 +7,7 @@ import { QRCodeSVG } from 'qrcode.react';
 
 interface Post {
   id: number;
-  type: 'text' | 'photo' | 'video' | 'podcast' | 'article';
+  type: 'text' | 'photo' | 'video' | 'podcast' | 'journal';
   content: string;
   author: string;
   authorRole: string;
@@ -18,16 +18,16 @@ interface Post {
   videoThumbnail?: string;
   podcastUrl?: string;
   podcastDuration?: string;
-  articleUrl?: string;
-  articleTitle?: string;
-  articleExcerpt?: string;
+  journalUrl?: string;
+  journalTitle?: string;
+  journalExcerpt?: string;
 }
 
 export default function ProjectDetailPage() {
   const router = useRouter();
   const params = useParams();
   const projectId = params.id as string;
-  const [contentFilter, setContentFilter] = useState<'all' | 'posts' | 'podcasts' | 'articles'>('all');
+  const [contentFilter, setContentFilter] = useState<'all' | 'posts' | 'podcasts' | 'journals'>('all');
   const [showQRCode, setShowQRCode] = useState(false);
   
   // Get the current URL for the QR code
@@ -187,16 +187,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 6,
-        type: 'article',
-        content: 'Read our comprehensive article on sustainable water management practices and their impact on rural communities.',
+        type: 'journal',
+        content: 'Read our comprehensive journal on sustainable water management practices and their impact on rural communities.',
         author: 'Emma Akinyi',
         authorRole: 'Research Coordinator',
         timestamp: '1 week ago',
         likes: 156,
         comments: 42,
-        articleUrl: 'https://example.com/article1',
-        articleTitle: 'Sustainable Water Management in Rural Kenya',
-        articleExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...'
+        journalUrl: 'https://example.com/article1',
+        journalTitle: 'Sustainable Water Management in Rural Kenya',
+        journalExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...'
       },
       {
         id: 2,
@@ -245,16 +245,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 14,
-        type: 'article',
+        type: 'journal',
         content: 'Case study: How community-led water management committees are ensuring long-term sustainability of water projects.',
         author: 'Emma Akinyi',
         authorRole: 'Community Development Lead',
         timestamp: '2 weeks ago',
         likes: 201,
         comments: 56,
-        articleUrl: 'https://example.com/article1b',
-        articleTitle: 'Community-Led Water Management: Success Stories',
-        articleExcerpt: 'Examining how local communities are taking ownership of water infrastructure and ensuring its maintenance...'
+        journalUrl: 'https://example.com/article1b',
+        journalTitle: 'Community-Led Water Management: Success Stories',
+        journalExcerpt: 'Examining how local communities are taking ownership of water infrastructure and ensuring its maintenance...'
       },
       {
         id: 15,
@@ -297,16 +297,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 8,
-        type: 'article',
+        type: 'journal',
         content: 'Discover how traditional ecological knowledge is being preserved and integrated into modern conservation efforts.',
         author: 'John Kariuki',
         authorRole: 'Documentation Lead',
         timestamp: '2 weeks ago',
         likes: 203,
         comments: 58,
-        articleUrl: 'https://example.com/article2',
-        articleTitle: 'Preserving Indigenous Knowledge for Future Generations',
-        articleExcerpt: 'A deep dive into the importance of documenting traditional practices and their role in environmental conservation...'
+        journalUrl: 'https://example.com/article2',
+        journalTitle: 'Preserving Indigenous Knowledge for Future Generations',
+        journalExcerpt: 'A deep dive into the importance of documenting traditional practices and their role in environmental conservation...'
       },
       {
         id: 2,
@@ -344,16 +344,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 17,
-        type: 'article',
+        type: 'journal',
         content: 'Research findings on how traditional farming methods can reduce chemical dependency and improve soil health.',
         author: 'John Kariuki',
         authorRole: 'Agricultural Researcher',
         timestamp: '3 weeks ago',
         likes: 234,
         comments: 67,
-        articleUrl: 'https://example.com/article2b',
-        articleTitle: 'Traditional Farming Meets Modern Science',
-        articleExcerpt: 'Bridging the gap between age-old agricultural wisdom and contemporary sustainable practices...'
+        journalUrl: 'https://example.com/article2b',
+        journalTitle: 'Traditional Farming Meets Modern Science',
+        journalExcerpt: 'Bridging the gap between age-old agricultural wisdom and contemporary sustainable practices...'
       },
       {
         id: 18,
@@ -396,16 +396,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 10,
-        type: 'article',
+        type: 'journal',
         content: 'Comprehensive analysis of coastal ecosystem health and the long-term benefits of mangrove restoration projects.',
         author: 'Lucy Wambui',
         authorRole: 'Research Analyst',
         timestamp: '3 weeks ago',
         likes: 267,
         comments: 73,
-        articleUrl: 'https://example.com/article3',
-        articleTitle: 'Coastal Ecosystem Restoration: A Path Forward',
-        articleExcerpt: 'Examining the science behind mangrove restoration and its critical role in protecting our coastlines...'
+        journalUrl: 'https://example.com/article3',
+        journalTitle: 'Coastal Ecosystem Restoration: A Path Forward',
+        journalExcerpt: 'Examining the science behind mangrove restoration and its critical role in protecting our coastlines...'
       },
       {
         id: 2,
@@ -454,16 +454,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 20,
-        type: 'article',
+        type: 'journal',
         content: 'Scientific study on the effectiveness of mangrove restoration in protecting coastal communities from storm surges.',
         author: 'Lucy Wambui',
         authorRole: 'Research Analyst',
         timestamp: '1 month ago',
         likes: 289,
         comments: 84,
-        articleUrl: 'https://example.com/article3b',
-        articleTitle: 'Mangroves: Nature\'s Coastal Defense System',
-        articleExcerpt: 'Understanding how mangrove forests act as natural barriers and their role in climate adaptation...'
+        journalUrl: 'https://example.com/article3b',
+        journalTitle: 'Mangroves: Nature\'s Coastal Defense System',
+        journalExcerpt: 'Understanding how mangrove forests act as natural barriers and their role in climate adaptation...'
       },
       {
         id: 21,
@@ -480,16 +480,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 22,
-        type: 'article',
+        type: 'journal',
         content: 'Economic analysis of coastal tourism and how conservation efforts are creating sustainable livelihoods for local communities.',
         author: 'Tom Njuguna',
         authorRole: 'Economic Development Officer',
         timestamp: '1 month ago',
         likes: 245,
         comments: 71,
-        articleUrl: 'https://example.com/article3c',
-        articleTitle: 'Conservation as Economic Opportunity',
-        articleExcerpt: 'How protecting marine ecosystems is generating income and employment for coastal communities...'
+        journalUrl: 'https://example.com/article3c',
+        journalTitle: 'Conservation as Economic Opportunity',
+        journalExcerpt: 'How protecting marine ecosystems is generating income and employment for coastal communities...'
       }
     ],
     '4': [
@@ -519,16 +519,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 12,
-        type: 'article',
+        type: 'journal',
         content: 'Exploring the role of youth leadership in driving climate action and building sustainable communities.',
         author: 'David Ochieng',
         authorRole: 'Youth Engagement Lead',
         timestamp: '2 weeks ago',
         likes: 189,
         comments: 52,
-        articleUrl: 'https://example.com/article4',
-        articleTitle: 'Empowering the Next Generation of Climate Leaders',
-        articleExcerpt: 'How youth-led initiatives are transforming environmental advocacy and creating lasting change...'
+        journalUrl: 'https://example.com/article4',
+        journalTitle: 'Empowering the Next Generation of Climate Leaders',
+        journalExcerpt: 'How youth-led initiatives are transforming environmental advocacy and creating lasting change...'
       },
       {
         id: 2,
@@ -566,16 +566,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 24,
-        type: 'article',
+        type: 'journal',
         content: 'Analysis of youth-led climate movements and their impact on policy change and public awareness across East Africa.',
         author: 'David Ochieng',
         authorRole: 'Youth Engagement Lead',
         timestamp: '3 weeks ago',
         likes: 267,
         comments: 89,
-        articleUrl: 'https://example.com/article4b',
-        articleTitle: 'The Power of Youth in Climate Action',
-        articleExcerpt: 'Examining how young activists are driving environmental policy and mobilizing communities for change...'
+        journalUrl: 'https://example.com/article4b',
+        journalTitle: 'The Power of Youth in Climate Action',
+        journalExcerpt: 'Examining how young activists are driving environmental policy and mobilizing communities for change...'
       },
       {
         id: 25,
@@ -592,16 +592,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 26,
-        type: 'article',
+        type: 'journal',
         content: 'Best practices guide for organizing effective climate action campaigns and building sustainable youth networks.',
         author: 'Grace Wanjiru',
         authorRole: 'Program Director',
         timestamp: '1 month ago',
         likes: 312,
         comments: 95,
-        articleUrl: 'https://example.com/article4c',
-        articleTitle: 'Building Effective Climate Action Networks',
-        articleExcerpt: 'A practical guide to organizing, mobilizing, and sustaining youth-led environmental movements...'
+        journalUrl: 'https://example.com/article4c',
+        journalTitle: 'Building Effective Climate Action Networks',
+        journalExcerpt: 'A practical guide to organizing, mobilizing, and sustaining youth-led environmental movements...'
       }
     ],
     '5': [
@@ -631,16 +631,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 28,
-        type: 'article',
+        type: 'journal',
         content: 'Research on the air quality improvements and health benefits of urban tree planting initiatives.',
         author: 'Alice Kamau',
         authorRole: 'Environmental Health Researcher',
         timestamp: '2 weeks ago',
         likes: 256,
         comments: 78,
-        articleUrl: 'https://example.com/article5b',
-        articleTitle: 'Urban Trees: Breathing Life into Cities',
-        articleExcerpt: 'How strategic tree planting is reducing air pollution and improving quality of life in urban areas...'
+        journalUrl: 'https://example.com/article5b',
+        journalTitle: 'Urban Trees: Breathing Life into Cities',
+        journalExcerpt: 'How strategic tree planting is reducing air pollution and improving quality of life in urban areas...'
       },
       {
         id: 29,
@@ -657,16 +657,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 30,
-        type: 'article',
+        type: 'journal',
         content: 'Case study: How school partnerships are ensuring long-term tree survival and student environmental education.',
         author: 'Robert Otieno',
         authorRole: 'Project Lead',
         timestamp: '3 weeks ago',
         likes: 223,
         comments: 65,
-        articleUrl: 'https://example.com/article5c',
-        articleTitle: 'Schools as Guardians of Urban Forests',
-        articleExcerpt: 'Exploring how educational institutions are becoming key partners in urban reforestation efforts...'
+        journalUrl: 'https://example.com/article5c',
+        journalTitle: 'Schools as Guardians of Urban Forests',
+        journalExcerpt: 'Exploring how educational institutions are becoming key partners in urban reforestation efforts...'
       },
       {
         id: 2,
@@ -706,16 +706,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 32,
-        type: 'article',
+        type: 'journal',
         content: 'Analysis of how solar power is transforming rural education and bridging the digital divide.',
         author: 'Emma Akinyi',
         authorRole: 'Education Technology Lead',
         timestamp: '2 weeks ago',
         likes: 345,
         comments: 102,
-        articleUrl: 'https://example.com/article6b',
-        articleTitle: 'Solar Power: Illuminating Rural Education',
-        articleExcerpt: 'Examining the transformative impact of renewable energy on educational outcomes in underserved communities...'
+        journalUrl: 'https://example.com/article6b',
+        journalTitle: 'Solar Power: Illuminating Rural Education',
+        journalExcerpt: 'Examining the transformative impact of renewable energy on educational outcomes in underserved communities...'
       },
       {
         id: 33,
@@ -732,16 +732,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 34,
-        type: 'article',
+        type: 'journal',
         content: 'Economic and environmental benefits of transitioning schools to renewable energy sources.',
         author: 'David Ochieng',
         authorRole: 'Project Manager',
         timestamp: '1 month ago',
         likes: 298,
         comments: 87,
-        articleUrl: 'https://example.com/article6c',
-        articleTitle: 'The Economics of Solar Schools',
-        articleExcerpt: 'Understanding the long-term cost savings and environmental impact of renewable energy in education...'
+        journalUrl: 'https://example.com/article6c',
+        journalTitle: 'The Economics of Solar Schools',
+        journalExcerpt: 'Understanding the long-term cost savings and environmental impact of renewable energy in education...'
       },
       {
         id: 2,
@@ -782,16 +782,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 36,
-        type: 'article',
+        type: 'journal',
         content: 'Study on the effectiveness of organic farming training programs in improving food security and farmer incomes.',
         author: 'Mary Njeri',
         authorRole: 'Research Analyst',
         timestamp: '2 weeks ago',
         likes: 234,
         comments: 69,
-        articleUrl: 'https://example.com/article7b',
-        articleTitle: 'Organic Farming: A Path to Food Security',
-        articleExcerpt: 'How sustainable agricultural practices are helping smallholder farmers increase productivity and income...'
+        journalUrl: 'https://example.com/article7b',
+        journalTitle: 'Organic Farming: A Path to Food Security',
+        journalExcerpt: 'How sustainable agricultural practices are helping smallholder farmers increase productivity and income...'
       },
       {
         id: 37,
@@ -808,16 +808,16 @@ export default function ProjectDetailPage() {
       },
       {
         id: 38,
-        type: 'article',
+        type: 'journal',
         content: 'Guide to implementing water-efficient irrigation systems and soil conservation techniques for small-scale farmers.',
         author: 'Lucy Wambui',
         authorRole: 'Training Coordinator',
         timestamp: '3 weeks ago',
         likes: 267,
         comments: 81,
-        articleUrl: 'https://example.com/article7c',
-        articleTitle: 'Water Management in Sustainable Agriculture',
-        articleExcerpt: 'Practical strategies for conserving water and maintaining soil health in smallholder farming systems...'
+        journalUrl: 'https://example.com/article7c',
+        journalTitle: 'Water Management in Sustainable Agriculture',
+        journalExcerpt: 'Practical strategies for conserving water and maintaining soil health in smallholder farming systems...'
       },
       {
         id: 2,
@@ -839,7 +839,7 @@ export default function ProjectDetailPage() {
     if (contentFilter === 'all') return true;
     if (contentFilter === 'posts') return ['text', 'photo', 'video'].includes(post.type);
     if (contentFilter === 'podcasts') return post.type === 'podcast';
-    if (contentFilter === 'articles') return post.type === 'article';
+    if (contentFilter === 'journals') return post.type === 'journal';
     return true;
   });
 
@@ -1003,7 +1003,7 @@ export default function ProjectDetailPage() {
                 { id: 'all', label: 'All' },
                 { id: 'posts', label: 'Posts' },
                 { id: 'podcasts', label: 'Podcasts' },
-                { id: 'articles', label: 'Articles' }
+                { id: 'journals', label: 'Journals' }
               ].map(filter => (
                 <button
                   key={filter.id}
@@ -1119,8 +1119,8 @@ export default function ProjectDetailPage() {
                 </div>
               )}
 
-              {/* Article */}
-              {post.type === 'article' && (
+              {/* Journal */}
+              {post.type === 'journal' && (
                 <div className="px-4 pb-4">
                   <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <div className="flex items-start gap-3 mb-3">
@@ -1128,20 +1128,20 @@ export default function ProjectDetailPage() {
                         <FileText className="w-6 h-6 text-gray-600" />
                       </div>
                       <div className="flex-1">
-                        {post.articleTitle && (
-                          <h5 className="text-sm font-bold text-gray-900 mb-1">{post.articleTitle}</h5>
+                        {post.journalTitle && (
+                          <h5 className="text-sm font-bold text-gray-900 mb-1">{post.journalTitle}</h5>
                         )}
-                        {post.articleExcerpt && (
-                          <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.articleExcerpt}</p>
+                        {post.journalExcerpt && (
+                          <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.journalExcerpt}</p>
                         )}
                       </div>
                     </div>
                     <button 
-                      onClick={() => window.open(post.articleUrl, '_blank')}
+                      onClick={() => window.open(post.journalUrl, '_blank')}
                       className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
                     >
                       <FileText className="w-4 h-4" />
-                      Read Article
+                      Read Journal
                     </button>
                   </div>
                 </div>
