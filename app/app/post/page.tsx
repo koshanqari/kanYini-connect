@@ -279,7 +279,7 @@ export default function EventsPage() {
   ];
 
   const fellowshipFilters = [
-    { id: 'all', label: 'All Programs' },
+    { id: 'all', label: 'All Fellowships' },
     { id: 'leadership', label: 'Leadership' },
     { id: 'research', label: 'Research' },
     { id: 'community', label: 'Community' },
@@ -317,12 +317,12 @@ export default function EventsPage() {
     <div className="p-4 space-y-4">
       {/* Header */}
       <div className="bg-gradient-to-r from-kanyini-primary to-green-700 rounded-lg p-6 text-white">
-        <h1 className="text-2xl font-bold mb-2">{activeTab === 'projects' ? 'Projects' : 'Programs & Fellowships'}</h1>
+        <h1 className="text-2xl font-bold mb-2">{activeTab === 'projects' ? 'Projects' : 'Fellowships'}</h1>
         <p className="text-green-50">{activeTab === 'projects' ? 'Join community projects and initiatives' : 'Apply for fellowship programs'}</p>
         <div className="mt-4 grid grid-cols-2 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold">{activeTab === 'projects' ? '7' : '5'}</div>
-            <div className="text-xs text-green-100">{activeTab === 'projects' ? 'Active Projects' : 'Programs'}</div>
+            <div className="text-xs text-green-100">{activeTab === 'projects' ? 'Active Projects' : 'Fellowships'}</div>
           </div>
           <div>
             <div className="text-2xl font-bold">{activeTab === 'projects' ? '2.5K+' : '58'}</div>
@@ -358,7 +358,7 @@ export default function EventsPage() {
                 : 'text-gray-600 border-b-2 border-transparent'
             }`}
           >
-            Programs
+            Fellowships
           </button>
         </div>
       </div>
@@ -382,7 +382,7 @@ export default function EventsPage() {
         <div className="flex items-center gap-2 mb-2">
           <Filter className="w-4 h-4 text-gray-600" />
           <span className="text-sm font-medium text-gray-700">
-            {activeTab === 'projects' ? 'Filter Projects' : 'Filter Programs'}
+            {activeTab === 'projects' ? 'Filter Projects' : 'Filter Fellowships'}
           </span>
         </div>
         <div className="flex gap-2 overflow-x-auto">

@@ -1,6 +1,6 @@
 'use client';
 
-import { MapPin, Users, Heart, MessageCircle, Share2, Play, Headphones, FileText } from 'lucide-react';
+import { MapPin, Users, Heart, MessageCircle, Share2, Play, Headphones, FileText, Calendar, Clock, User } from 'lucide-react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -8,7 +8,7 @@ interface Post {
   id: number;
   projectId: number;
   projectName: string;
-  type: 'text' | 'photo' | 'video' | 'podcast' | 'article';
+  type: 'text' | 'photo' | 'video' | 'podcast' | 'journal';
   content: string;
   author: string;
   authorRole: string;
@@ -19,9 +19,9 @@ interface Post {
   videoThumbnail?: string;
   podcastUrl?: string;
   podcastDuration?: string;
-  articleUrl?: string;
-  articleTitle?: string;
-  articleExcerpt?: string;
+  journalUrl?: string;
+  journalTitle?: string;
+  journalExcerpt?: string;
 }
 
 interface NewProject {
@@ -36,6 +36,22 @@ interface NewProject {
   moneyRaised: number;
   membersRequired: number;
   membersJoined: number;
+}
+
+interface Event {
+  id: number;
+  title: string;
+  type: 'workshop' | 'meetup' | 'webinar' | 'conference' | 'social';
+  date: string;
+  time: string;
+  location: string;
+  attendees: number;
+  maxAttendees?: number;
+  description: string;
+  organizer: string;
+  isVirtual: boolean;
+  projectId: number;
+  projectName: string;
 }
 
 export default function FeedPage() {
@@ -126,16 +142,16 @@ export default function FeedPage() {
       id: 7,
       projectId: 2,
       projectName: 'Indigenous Knowledge Documentation',
-      type: 'article',
+      type: 'journal',
       content: 'Read our comprehensive article on sustainable water management practices and their impact on rural communities.',
       author: 'Emma Akinyi',
       authorRole: 'Research Coordinator',
       timestamp: '1 week ago',
       likes: 156,
       comments: 42,
-      articleUrl: 'https://example.com/article1',
-      articleTitle: 'Sustainable Water Management in Rural Kenya',
-      articleExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...'
+      journalUrl: 'https://example.com/article1',
+      journalTitle: 'Sustainable Water Management in Rural Kenya',
+      journalExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...'
     },
     {
       id: 8,
@@ -156,16 +172,16 @@ export default function FeedPage() {
       id: 9,
       projectId: 4,
       projectName: 'Youth Environmental Leadership Program',
-      type: 'article',
+      type: 'journal',
       content: 'Exploring the role of youth leadership in driving climate action and building sustainable communities.',
       author: 'David Ochieng',
       authorRole: 'Youth Engagement Lead',
       timestamp: '2 weeks ago',
       likes: 189,
       comments: 52,
-      articleUrl: 'https://example.com/article4',
-      articleTitle: 'Empowering the Next Generation of Climate Leaders',
-      articleExcerpt: 'How youth-led initiatives are transforming environmental advocacy and creating lasting change...'
+      journalUrl: 'https://example.com/article4',
+      journalTitle: 'Empowering the Next Generation of Climate Leaders',
+      journalExcerpt: 'How youth-led initiatives are transforming environmental advocacy and creating lasting change...'
     }
   ];
 
@@ -199,7 +215,56 @@ export default function FeedPage() {
     }
   ];
 
-  const filters = ['all', 'posts', 'podcasts', 'articles', 'new projects'];
+  // Events data
+  const events: Event[] = [
+    {
+      id: 1,
+      title: 'Community Networking Night',
+      type: 'social',
+      date: 'December 18, 2025',
+      time: '6:00 PM - 9:00 PM',
+      location: 'Nairobi City Hall',
+      attendees: 45,
+      maxAttendees: 80,
+      description: 'Join fellow community members for an evening of networking, food, and conversations about environmental action.',
+      organizer: 'Sarah Mwangi',
+      isVirtual: false,
+      projectId: 1,
+      projectName: 'Clean Water for Rural Communities'
+    },
+    {
+      id: 2,
+      title: 'Climate Action Workshop',
+      type: 'workshop',
+      date: 'December 22, 2025',
+      time: '10:00 AM - 2:00 PM',
+      location: 'Virtual (Zoom)',
+      attendees: 67,
+      maxAttendees: 100,
+      description: 'Interactive workshop on practical climate action strategies. Learn how to reduce your carbon footprint.',
+      organizer: 'John Kariuki',
+      isVirtual: true,
+      projectId: 3,
+      projectName: 'Coastal Ecosystem Restoration'
+    },
+    {
+      id: 3,
+      title: 'Youth Climate Forum',
+      type: 'meetup',
+      date: 'January 20, 2026',
+      time: '4:00 PM - 7:00 PM',
+      location: 'University of Nairobi',
+      attendees: 56,
+      maxAttendees: 100,
+      description: 'Forum for young environmental activists to share experiences, collaborate on projects, and build a stronger youth climate movement.',
+      organizer: 'Robert Otieno',
+      isVirtual: false,
+      projectId: 4,
+      projectName: 'Youth Environmental Leadership Program'
+    }
+  ];
+
+  const filters = ['all', 'posts', 'podcasts', 'journals', 'events', 'new projects'];
 
   // Combine and filter feed items
   const getFeedItems = () => {
@@ -209,16 +274,20 @@ export default function FeedPage() {
     if (activeFilter === 'podcasts') {
       return feedPosts.filter(p => p.type === 'podcast').map(p => ({ type: 'post' as const, data: p }));
     }
-    if (activeFilter === 'articles') {
-      return feedPosts.filter(p => p.type === 'article').map(p => ({ type: 'post' as const, data: p }));
+    if (activeFilter === 'journals') {
+      return feedPosts.filter(p => p.type === 'journal').map(p => ({ type: 'post' as const, data: p }));
+    }
+    if (activeFilter === 'events') {
+      return events.map(e => ({ type: 'event' as const, data: e }));
     }
     if (activeFilter === 'new projects') {
       return newProjects.map(p => ({ type: 'project' as const, data: p }));
     }
     
     // Mix all content for 'all' filter
-    const items: Array<{ type: 'post' | 'project', data: Post | NewProject }> = [];
+    const items: Array<{ type: 'post' | 'project' | 'event', data: Post | NewProject | Event }> = [];
     feedPosts.forEach(post => items.push({ type: 'post', data: post }));
+    events.forEach(event => items.push({ type: 'event', data: event }));
     newProjects.forEach(project => items.push({ type: 'project', data: project }));
     return items;
   };
@@ -378,8 +447,8 @@ export default function FeedPage() {
                   </div>
                 )}
 
-                {/* Article */}
-                {post.type === 'article' && (
+                {/* Journal */}
+                {post.type === 'journal' && (
                   <div className="px-4 pb-4">
                     <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                       <div className="flex items-start gap-3 mb-3">
@@ -387,20 +456,20 @@ export default function FeedPage() {
                           <FileText className="w-6 h-6 text-gray-600" />
                         </div>
                         <div className="flex-1">
-                          {post.articleTitle && (
-                            <h5 className="text-sm font-bold text-gray-900 mb-1">{post.articleTitle}</h5>
+                          {post.journalTitle && (
+                            <h5 className="text-sm font-bold text-gray-900 mb-1">{post.journalTitle}</h5>
                           )}
-                          {post.articleExcerpt && (
-                            <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.articleExcerpt}</p>
+                          {post.journalExcerpt && (
+                            <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.journalExcerpt}</p>
                           )}
                         </div>
                       </div>
                       <button 
-                        onClick={() => window.open(post.articleUrl, '_blank')}
+                        onClick={() => window.open(post.journalUrl, '_blank')}
                         className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
                       >
                         <FileText className="w-4 h-4" />
-                        Read Article
+                        Read Journal
                       </button>
                     </div>
                   </div>
@@ -418,6 +487,114 @@ export default function FeedPage() {
                   </button>
                   <button className="flex items-center gap-2 text-gray-600 hover:text-kanyini-primary transition ml-auto">
                     <Share2 className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            );
+          } else if (item.type === 'event') {
+            const event = item.data as Event;
+            return (
+              <div key={`event-${event.id}`} className="bg-white rounded-lg shadow overflow-hidden">
+                {/* Project Header */}
+                <div 
+                  onClick={() => router.push(`/app/post/${event.projectId}`)}
+                  className="bg-kanyini-primary px-4 py-2 cursor-pointer hover:bg-green-700 transition"
+                >
+                  <p className="text-white font-semibold text-sm">{event.projectName}</p>
+                </div>
+
+                {/* Event Content */}
+                <div className="p-4">
+                  {/* Event Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{event.title}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          event.type === 'workshop' ? 'bg-purple-100 text-purple-700' :
+                          event.type === 'meetup' ? 'bg-blue-100 text-blue-700' :
+                          event.type === 'webinar' ? 'bg-green-100 text-green-700' :
+                          event.type === 'conference' ? 'bg-red-100 text-red-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                        </span>
+                        {event.isVirtual && (
+                          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">
+                            Virtual
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-700 mb-3">{event.description}</p>
+
+                {/* Event Details Grid */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div className="flex items-start gap-2">
+                    <Calendar className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Date</p>
+                      <p className="text-sm font-medium text-gray-900">{event.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Clock className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Time</p>
+                      <p className="text-sm font-medium text-gray-900">{event.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <MapPin className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Location</p>
+                      <p className="text-sm font-medium text-gray-900">{event.location}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <User className="w-4 h-4 text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-gray-500">Organizer</p>
+                      <p className="text-sm font-medium text-gray-900">{event.organizer}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Attendees Progress */}
+                {event.maxAttendees && (
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <Users className="w-4 h-4 text-gray-500" />
+                        <span className="text-sm text-gray-700">
+                          {event.attendees} / {event.maxAttendees} attending
+                        </span>
+                      </div>
+                      <span className="text-xs font-medium text-kanyini-primary">
+                        {Math.round((event.attendees / event.maxAttendees) * 100)}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-kanyini-primary h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min((event.attendees / event.maxAttendees) * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                  {/* RSVP Button */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle RSVP
+                    }}
+                    className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm"
+                  >
+                    RSVP to Event
                   </button>
                 </div>
               </div>

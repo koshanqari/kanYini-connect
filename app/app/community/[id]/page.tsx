@@ -50,7 +50,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
     return (
       <div className="p-4 flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
+          <Loader2 className="w-8 h-8 text-kanyini-primary animate-spin mx-auto mb-2" />
           <p className="text-gray-600">Loading profile...</p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
           <p className="text-gray-600">Profile not found</p>
           <button
             onClick={() => router.push('/app/community')}
-            className="mt-4 text-blue-600 hover:underline"
+            className="mt-4 text-kanyini-primary hover:underline"
           >
             Back to Community
           </button>
@@ -90,7 +90,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
 
       {/* Profile Header Card */}
       <div className="bg-white rounded-lg shadow">
-        <div className="h-20 bg-gradient-to-r from-blue-500 to-blue-600 rounded-t-lg"></div>
+        <div className="h-20 bg-gradient-to-r from-kanyini-primary to-green-700 rounded-t-lg"></div>
         <div className="px-4 pb-4">
           <div className="flex items-end -mt-12 mb-4">
             <div className="w-24 h-24 bg-gray-300 rounded-full border-4 border-white flex items-center justify-center overflow-hidden">
@@ -104,7 +104,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
           <div className="flex items-center gap-2">
             <h2 className="text-xl font-bold text-gray-900">{profile?.name || 'No name'}</h2>
             {profile?.is_verified && (
-              <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">
+              <div className="flex items-center gap-1 px-2 py-0.5 bg-green-50 text-kanyini-primary rounded-full">
                 <CheckCircle2 className="w-4 h-4" />
                 <span className="text-xs font-medium">Verified</span>
               </div>
@@ -191,7 +191,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                             href={url.startsWith('http') ? url : `https://${url}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-blue-600 hover:underline block"
+                            className="text-sm text-kanyini-primary hover:underline block"
                           >
                             {text}
                           </a>
@@ -275,7 +275,7 @@ export default function AlumniProfilePage({ params }: { params: Promise<{ id: st
                     {edu.description && (
                       <p className="text-sm text-gray-600 mt-2">{edu.description}</p>
                     )}
-                    <span className="inline-block mt-2 px-2 py-1 bg-blue-50 text-blue-700 text-xs rounded">
+                    <span className="inline-block mt-2 px-2 py-1 bg-green-50 text-green-700 text-xs rounded">
                       {edu.type === 'education' ? 'Education' : 'Certificate'}
                     </span>
                   </div>

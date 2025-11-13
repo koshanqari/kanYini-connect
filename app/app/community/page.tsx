@@ -31,6 +31,8 @@ interface Event {
   description: string;
   organizer: string;
   isVirtual: boolean;
+  projectId: number;
+  projectName: string;
 }
 
 export default function MyCommunityPage() {
@@ -97,7 +99,23 @@ export default function MyCommunityPage() {
     setSearchQuery(e.target.value);
   };
 
-  const handleViewProfile = (alumniId: string) => {
+  const handleViewProfile = async (alumniId: string) => {
+    // Check if this is the current user's profile
+    try {
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        // If the clicked profile is the current user's profile, redirect to their own profile page
+        if (user.id === parseInt(alumniId, 10)) {
+          router.push('/app');
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error checking user profile:', error);
+    }
+    // Otherwise, navigate to the community profile page
     router.push(`/app/community/${alumniId}`);
   };
 
@@ -114,7 +132,9 @@ export default function MyCommunityPage() {
       maxAttendees: 80,
       description: 'Join fellow community members for an evening of networking, food, and conversations about environmental action. A great opportunity to make new connections and share ideas.',
       organizer: 'Sarah Mwangi',
-      isVirtual: false
+      isVirtual: false,
+      projectId: 1,
+      projectName: 'Clean Water for Rural Communities'
     },
     {
       id: 2,
@@ -127,7 +147,9 @@ export default function MyCommunityPage() {
       maxAttendees: 100,
       description: 'Interactive workshop on practical climate action strategies. Learn how to reduce your carbon footprint and engage your community in sustainability efforts.',
       organizer: 'John Kariuki',
-      isVirtual: true
+      isVirtual: true,
+      projectId: 3,
+      projectName: 'Coastal Ecosystem Restoration'
     },
     {
       id: 3,
@@ -140,7 +162,9 @@ export default function MyCommunityPage() {
       maxAttendees: 40,
       description: 'Casual monthly gathering to catch up with community members, share updates on projects, and discuss upcoming initiatives over coffee.',
       organizer: 'Grace Wanjiru',
-      isVirtual: false
+      isVirtual: false,
+      projectId: 4,
+      projectName: 'Youth Environmental Leadership Program'
     },
     {
       id: 4,
@@ -153,7 +177,9 @@ export default function MyCommunityPage() {
       maxAttendees: 150,
       description: 'Learn from experienced environmental leaders about building effective grassroots movements and scaling impact. Q&A session included.',
       organizer: 'Emma Akinyi',
-      isVirtual: true
+      isVirtual: true,
+      projectId: 2,
+      projectName: 'Indigenous Knowledge Documentation'
     },
     {
       id: 5,
@@ -166,7 +192,9 @@ export default function MyCommunityPage() {
       maxAttendees: 500,
       description: '3-day conference bringing together climate activists, researchers, and policymakers from across East Africa. Includes keynotes, panels, and networking sessions.',
       organizer: 'Kanyini Earth Project',
-      isVirtual: false
+      isVirtual: false,
+      projectId: 5,
+      projectName: 'Urban Reforestation Initiative'
     },
     {
       id: 6,
@@ -179,7 +207,9 @@ export default function MyCommunityPage() {
       maxAttendees: 100,
       description: 'Forum for young environmental activists to share experiences, collaborate on projects, and build a stronger youth climate movement.',
       organizer: 'Robert Otieno',
-      isVirtual: false
+      isVirtual: false,
+      projectId: 4,
+      projectName: 'Youth Environmental Leadership Program'
     }
   ];
 
@@ -549,32 +579,45 @@ export default function MyCommunityPage() {
             </div>
           ) : (
             filteredEvents.map((event) => (
-              <div key={event.id} className="bg-white rounded-lg shadow hover:shadow-lg transition p-4">
-                {/* Event Header */}
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">{event.title}</h3>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                        event.type === 'workshop' ? 'bg-purple-100 text-purple-700' :
-                        event.type === 'meetup' ? 'bg-blue-100 text-blue-700' :
-                        event.type === 'webinar' ? 'bg-green-100 text-green-700' :
-                        event.type === 'conference' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                      </span>
-                      {event.isVirtual && (
-                        <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">
-                          Virtual
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              <div 
+                key={event.id} 
+                className="bg-white rounded-lg shadow overflow-hidden"
+              >
+                {/* Project Header */}
+                <div 
+                  onClick={() => router.push(`/app/post/${event.projectId}`)}
+                  className="bg-kanyini-primary px-4 py-2 cursor-pointer hover:bg-green-700 transition"
+                >
+                  <p className="text-white font-semibold text-sm">{event.projectName}</p>
                 </div>
 
-                {/* Description */}
-                <p className="text-sm text-gray-700 mb-3">{event.description}</p>
+                {/* Event Content */}
+                <div className="p-4">
+                  {/* Event Header */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{event.title}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          event.type === 'workshop' ? 'bg-purple-100 text-purple-700' :
+                          event.type === 'meetup' ? 'bg-blue-100 text-blue-700' :
+                          event.type === 'webinar' ? 'bg-green-100 text-green-700' :
+                          event.type === 'conference' ? 'bg-red-100 text-red-700' :
+                          'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                        </span>
+                        {event.isVirtual && (
+                          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 font-medium">
+                            Virtual
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-700 mb-3">{event.description}</p>
 
                 {/* Event Details Grid */}
                 <div className="grid grid-cols-2 gap-3 mb-3">
@@ -631,10 +674,17 @@ export default function MyCommunityPage() {
                   </div>
                 )}
 
-                {/* RSVP Button */}
-                <button className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
-                  RSVP to Event
-                </button>
+                  {/* RSVP Button */}
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle RSVP
+                    }}
+                    className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm"
+                  >
+                    RSVP to Event
+                  </button>
+                </div>
               </div>
             ))
           )}

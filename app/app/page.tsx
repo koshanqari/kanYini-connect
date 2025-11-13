@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { User, Plus, Mail, Phone, Clock, MessageCircle, Link as LinkIcon, MapPin, Briefcase, GraduationCap, Edit2, Trash2, CheckCircle2, Loader2, LogOut } from 'lucide-react';
+import { User, Plus, Mail, Phone, Clock, MessageCircle, Link as LinkIcon, MapPin, Briefcase, GraduationCap, Edit2, Trash2, CheckCircle2, Loader2, LogOut, Share2, Trophy, Heart, TreePine, Droplet, Award, TrendingUp, Clock as ClockIcon, Users, MessageSquare, ThumbsUp, FileText, Activity, ChevronDown, ChevronUp, Play, Headphones } from 'lucide-react';
 import EditModal from '@/components/EditModal';
 import SearchableSelect from '@/components/SearchableSelect';
 import { Country, State, City } from 'country-state-city';
@@ -16,6 +16,10 @@ export default function MyProfilePage() {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [allSkills, setAllSkills] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<'profile' | 'contribution'>('contribution');
+  const [contributionSubTab, setContributionSubTab] = useState<'posts' | 'activity'>('posts');
+  const [showContributionDetails, setShowContributionDetails] = useState(false);
+  const [postFilter, setPostFilter] = useState<'all' | 'podcasts' | 'articles'>('all');
   const router = useRouter();
 
   useEffect(() => {
@@ -62,6 +66,65 @@ export default function MyProfilePage() {
       localStorage.removeItem('user');
       localStorage.removeItem('token');
       router.push('/auth/login');
+    }
+  };
+
+  const handleShareContribution = async () => {
+    const contributionData = {
+      moneyRaised: '$12,500',
+      peopleInvited: 18,
+      postsShared: 24,
+      volunteerHours: 48,
+      personalContributions: '$5,250',
+      skillsShared: 8,
+      projectsSupported: 3,
+      treesPlanted: 125,
+      livesImpacted: 45,
+      achievements: ['First Contribution', '$1K Milestone', 'Multi-Project Supporter', 'Volunteer Champion', 'Community Builder'],
+      userName: profile?.name || 'A Kanyini supporter'
+    };
+
+    const shareText = `🌱 I'm making a difference with Kanyini Earth Project! 
+
+💰 Money Raised: ${contributionData.moneyRaised}
+👥 People Invited: ${contributionData.peopleInvited}
+📝 Posts Shared: ${contributionData.postsShared}
+⏰ Volunteer Hours: ${contributionData.volunteerHours} hours
+💵 Personal Contributions: ${contributionData.personalContributions}
+🌳 Trees Planted: ${contributionData.treesPlanted}
+💧 Lives Impacted: ${contributionData.livesImpacted}
+🎯 Supporting ${contributionData.projectsSupported} active projects
+
+Join me in creating positive change! 🌍
+
+#KanyiniConnect #EarthProject #MakingADifference`;
+
+    const shareUrl = `${window.location.origin}/app`;
+
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare({ text: shareText })) {
+        await navigator.share({
+          title: `${contributionData.userName}'s Contribution to Kanyini`,
+          text: shareText,
+          url: shareUrl,
+        });
+      } else {
+        // Fallback: Copy to clipboard
+        await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+        alert('Contribution details copied to clipboard! Share it wherever you like.');
+      }
+    } catch (error: any) {
+      // User cancelled or error occurred
+      if (error.name !== 'AbortError') {
+        // Fallback: Copy to clipboard
+        try {
+          await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+          alert('Contribution details copied to clipboard! Share it wherever you like.');
+        } catch (clipboardError) {
+          console.error('Failed to copy to clipboard:', clipboardError);
+          alert('Unable to share. Please try again.');
+        }
+      }
     }
   };
 
@@ -305,6 +368,671 @@ export default function MyProfilePage() {
           )}
         </div>
       </div>
+
+      {/* Tabs Navigation */}
+      <div className="bg-white rounded-lg shadow">
+        <div className="flex border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('contribution')}
+            className={`flex-1 py-3 text-sm font-semibold transition ${
+              activeTab === 'contribution'
+                ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                : 'text-gray-600 border-b-2 border-transparent hover:text-gray-900'
+            }`}
+          >
+            Journey
+          </button>
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`flex-1 py-3 text-sm font-semibold transition ${
+              activeTab === 'profile'
+                ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                : 'text-gray-600 border-b-2 border-transparent hover:text-gray-900'
+            }`}
+          >
+            Info
+          </button>
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'contribution' && (
+        <div className="space-y-4">
+          {/* Contribution Section */}
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            {/* Header with Share Button */}
+            <div className="bg-gradient-to-r from-kanyini-primary to-green-700 p-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-white" />
+                        <h3 className="text-lg font-semibold text-white">Contribution</h3>
+                </div>
+                <button
+                  onClick={handleShareContribution}
+                  className="flex items-center gap-2 px-3 py-1.5 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg transition text-sm font-medium"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 space-y-4">
+              {/* Pledge Section */}
+              <div className="border-b border-gray-100 pb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-gray-900">Pledge</h4>
+                  <button
+                    onClick={() => {
+                      // Handle add/edit pledge
+                      alert('Add/Edit Pledge functionality coming soon');
+                    }}
+                    className="flex items-center gap-1 text-xs text-kanyini-primary hover:text-green-700 transition"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Pledge
+                  </button>
+                </div>
+                <div className="bg-gradient-to-r from-kanyini-primary to-green-700 rounded-lg p-4 text-white">
+                  <p className="text-sm font-medium mb-3">My Commitment to Kanyini</p>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <div className="w-5 h-5 bg-white bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Heart className="w-3 h-3 text-white" />
+                      </div>
+                      <p className="text-xs text-green-50 leading-relaxed">Contribute $500 monthly to support environmental projects</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-5 h-5 bg-white bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Users className="w-3 h-3 text-white" />
+                      </div>
+                      <p className="text-xs text-green-50 leading-relaxed">Recruit 5 new members this year to expand our community</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-5 h-5 bg-white bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <ClockIcon className="w-3 h-3 text-white" />
+                      </div>
+                      <p className="text-xs text-green-50 leading-relaxed">Dedicate 20 volunteer hours per month to environmental projects</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-5 h-5 bg-white bg-opacity-20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <TreePine className="w-3 h-3 text-white" />
+                      </div>
+                      <p className="text-xs text-green-50 leading-relaxed">Plant and maintain 50 trees annually in my local community</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Achievements Section */}
+              <div className="border-b border-gray-100 pb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-gray-900">Achievements</h4>
+                  <TrendingUp className="w-4 h-4 text-gray-500" />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-50 border border-yellow-200 rounded-full">
+                    <Trophy className="w-4 h-4 text-yellow-600" />
+                    <span className="text-xs font-medium text-yellow-700">First Contribution</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
+                    <Award className="w-4 h-4 text-green-600" />
+                    <span className="text-xs font-medium text-green-700">$1K Milestone</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-full">
+                    <Heart className="w-4 h-4 text-blue-600" />
+                    <span className="text-xs font-medium text-blue-700">Multi-Project Supporter</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-full">
+                    <Users className="w-4 h-4 text-purple-600" />
+                    <span className="text-xs font-medium text-purple-700">Volunteer Champion</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-full">
+                    <Users className="w-4 h-4 text-orange-600" />
+                    <span className="text-xs font-medium text-orange-700">Community Builder</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Impact Section */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-gray-900">Impact</h4>
+                  <TrendingUp className="w-4 h-4 text-gray-500" />
+                </div>
+                
+                {/* Overall Stats */}
+                <div className="grid grid-cols-2 gap-3 mb-3">
+                  <div className="bg-green-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 mb-1">Money Raised</p>
+                    <p className="text-xl font-bold text-kanyini-primary">$12,500</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 mb-1">Members Recruited</p>
+                    <p className="text-xl font-bold text-blue-600">18</p>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 mb-1">Posts Shared</p>
+                    <p className="text-xl font-bold text-purple-600">24</p>
+                  </div>
+                  <div className="bg-orange-50 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 mb-1">Volunteer Hours</p>
+                    <p className="text-xl font-bold text-orange-600">48</p>
+                  </div>
+                </div>
+
+                {/* Secondary Stats Grid */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-green-50 rounded-lg p-3 text-center">
+                    <TreePine className="w-5 h-5 text-green-600 mx-auto mb-1" />
+                    <p className="text-base font-bold text-gray-900">125</p>
+                    <p className="text-xs text-gray-600">Trees Planted</p>
+                  </div>
+                  <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <Droplet className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+                    <p className="text-base font-bold text-gray-900">45</p>
+                    <p className="text-xs text-gray-600">Lives Impacted</p>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-3 text-center">
+                    <Users className="w-5 h-5 text-purple-600 mx-auto mb-1" />
+                    <p className="text-base font-bold text-gray-900">3</p>
+                    <p className="text-xs text-gray-600">Projects</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dropdown for Detailed Contribution Info */}
+              <div className="border-t border-gray-100 pt-4">
+                <button
+                  onClick={() => setShowContributionDetails(!showContributionDetails)}
+                  className="w-full flex items-center justify-between py-2 text-sm font-medium text-gray-900 hover:text-kanyini-primary transition"
+                >
+                  <span>View Details</span>
+                  {showContributionDetails ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+
+                {showContributionDetails && (
+                  <div className="mt-4 space-y-4">
+                    {/* Contribution Types */}
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">Contribution Breakdown</h4>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                              <Heart className="w-5 h-5 text-green-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">Money Raised</p>
+                              <p className="text-xs text-gray-500">Fundraising campaigns & contributions</p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-semibold text-kanyini-primary">$12,500</p>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                              <Users className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">People Invited</p>
+                              <p className="text-xs text-gray-500">Community members you've brought in</p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-semibold text-blue-600">18</p>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                              <FileText className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">Posts Shared</p>
+                              <p className="text-xs text-gray-500">Updates, stories & content created</p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-semibold text-purple-600">24</p>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                              <ClockIcon className="w-5 h-5 text-orange-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">Volunteer Hours</p>
+                              <p className="text-xs text-gray-500">Time dedicated to projects</p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-semibold text-orange-600">48 hrs</p>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                              <Award className="w-5 h-5 text-indigo-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">Skills Shared</p>
+                              <p className="text-xs text-gray-500">Mentoring & workshops conducted</p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-semibold text-indigo-600">8 sessions</p>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                              <Heart className="w-5 h-5 text-teal-600" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-900">Personal Contributions</p>
+                              <p className="text-xs text-gray-500">Direct donations made</p>
+                            </div>
+                          </div>
+                          <p className="text-sm font-semibold text-teal-600">$5,250</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recent Contributions */}
+                    <div className="border-t border-gray-100 pt-4">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">Recent Contributions</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">Invited 3 new people</p>
+                            <p className="text-xs text-gray-500">Community • 3 days ago</p>
+                          </div>
+                          <p className="text-sm font-semibold text-blue-600">+3</p>
+                        </div>
+                        <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">Raised $2,500 for Clean Water</p>
+                            <p className="text-xs text-gray-500">Fundraising • 1 week ago</p>
+                          </div>
+                          <p className="text-sm font-semibold text-kanyini-primary">$2,500</p>
+                        </div>
+                        <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">Shared project update post</p>
+                            <p className="text-xs text-gray-500">Post • 1 week ago</p>
+                          </div>
+                          <p className="text-sm font-semibold text-purple-600">+1</p>
+                        </div>
+                        <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">Beach Cleanup Event</p>
+                            <p className="text-xs text-gray-500">Volunteer • 2 weeks ago</p>
+                          </div>
+                          <p className="text-sm font-semibold text-orange-600">8 hrs</p>
+                        </div>
+                        <div className="flex items-center justify-between py-2 border-b border-gray-50">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">Personal donation</p>
+                            <p className="text-xs text-gray-500">Financial • 2 weeks ago</p>
+                          </div>
+                          <p className="text-sm font-semibold text-teal-600">$500</p>
+                        </div>
+                        <div className="flex items-center justify-between py-2">
+                          <div>
+                            <p className="text-sm font-medium text-gray-900">Youth Mentorship Program</p>
+                            <p className="text-xs text-gray-500">Skills • 2 months ago</p>
+                          </div>
+                          <p className="text-sm font-semibold text-indigo-600">4 sessions</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Sub-tabs for Posts and Activity */}
+          <div className="bg-white rounded-lg shadow">
+            <div className="flex border-b border-gray-200">
+              <button
+                onClick={() => setContributionSubTab('posts')}
+                className={`flex-1 py-3 text-sm font-semibold transition ${
+                  contributionSubTab === 'posts'
+                    ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                    : 'text-gray-600 border-b-2 border-transparent hover:text-gray-900'
+                }`}
+              >
+                Posts
+              </button>
+              <button
+                onClick={() => setContributionSubTab('activity')}
+                className={`flex-1 py-3 text-sm font-semibold transition ${
+                  contributionSubTab === 'activity'
+                    ? 'text-kanyini-primary border-b-2 border-kanyini-primary'
+                    : 'text-gray-600 border-b-2 border-transparent hover:text-gray-900'
+                }`}
+              >
+                Activity
+              </button>
+            </div>
+          </div>
+
+          {/* Posts Tab Content */}
+          {contributionSubTab === 'posts' && (() => {
+            // Define all posts with their types
+            const allPosts = [
+              {
+                id: 1,
+                type: 'photo',
+                projectName: 'Clean Water for Rural Communities',
+                projectId: '1',
+                content: 'Amazing progress today! We installed our 3rd water well and the community is thrilled. The smiles on the children\'s faces made it all worth it. Clean water is a basic right, and we\'re making it happen!',
+                imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+                likes: 24,
+                comments: 8,
+                shares: 5,
+                timestamp: '3 days ago'
+              },
+              {
+                id: 2,
+                type: 'photo',
+                projectName: 'Reforestation Initiative',
+                projectId: '3',
+                content: 'Just completed our monthly tree planting session! 50 new saplings in the ground. Every tree counts in our fight against climate change. Grateful to all the volunteers who came out today.',
+                imageUrl: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
+                likes: 42,
+                comments: 12,
+                shares: 9,
+                timestamp: '1 week ago'
+              },
+              {
+                id: 3,
+                type: 'text',
+                projectName: 'Youth Environmental Leadership Program',
+                projectId: '4',
+                content: 'Excited to announce our new scholarship program! We\'re providing educational opportunities to 20 bright students this year. Education is the key to a better future.',
+                likes: 67,
+                comments: 15,
+                shares: 12,
+                timestamp: '2 weeks ago'
+              },
+              {
+                id: 4,
+                type: 'video',
+                projectName: 'Clean Water for Rural Communities',
+                projectId: '1',
+                content: 'Update on our water well project: Site preparation is complete and drilling begins next week! The community has been incredibly supportive. Can\'t wait to see clean water flowing soon.',
+                videoThumbnail: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&q=80',
+                likes: 38,
+                comments: 11,
+                shares: 7,
+                timestamp: '3 weeks ago'
+              },
+              {
+                id: 5,
+                type: 'podcast',
+                projectName: 'Clean Water for Rural Communities',
+                projectId: '1',
+                content: 'Watch our latest video podcast episode featuring community leaders discussing water access challenges and solutions in rural Kenya.',
+                podcastUrl: 'https://example.com/podcast1',
+                podcastDuration: '45 min',
+                videoThumbnail: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80',
+                likes: 89,
+                comments: 24,
+                shares: 15,
+                timestamp: '3 days ago'
+              },
+              {
+                id: 6,
+                type: 'article',
+                projectName: 'Indigenous Knowledge Documentation',
+                projectId: '2',
+                content: 'Read our comprehensive article on sustainable water management practices and their impact on rural communities.',
+                articleUrl: 'https://example.com/article1',
+                articleTitle: 'Sustainable Water Management in Rural Kenya',
+                articleExcerpt: 'Exploring innovative approaches to providing clean water access to underserved communities...',
+                likes: 156,
+                comments: 42,
+                shares: 28,
+                timestamp: '1 week ago'
+              }
+            ];
+
+            // Filter posts based on selected filter
+            const filteredPosts = allPosts.filter(post => {
+              if (postFilter === 'all') return true;
+              if (postFilter === 'podcasts') return post.type === 'podcast';
+              if (postFilter === 'articles') return post.type === 'article';
+              return true;
+            });
+
+            return (
+              <div className="space-y-4">
+                {/* Filter Buttons */}
+                <div className="bg-white rounded-lg shadow p-3">
+                  <div className="flex gap-2 overflow-x-auto">
+                    {[
+                      { id: 'all', label: 'All' },
+                      { id: 'podcasts', label: 'Podcasts' },
+                      { id: 'articles', label: 'Articles' }
+                    ].map(filter => (
+                      <button
+                        key={filter.id}
+                        onClick={() => setPostFilter(filter.id as 'all' | 'podcasts' | 'articles')}
+                        className={`px-4 py-1.5 text-sm border rounded-full whitespace-nowrap transition ${
+                          postFilter === filter.id
+                            ? 'bg-kanyini-primary text-white border-kanyini-primary'
+                            : 'border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        {filter.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Render filtered posts */}
+                {filteredPosts.length === 0 ? (
+                  <div className="bg-white rounded-lg shadow p-8 text-center">
+                    <p className="text-gray-500">No {postFilter === 'all' ? 'posts' : postFilter} found</p>
+                  </div>
+                ) : (
+                  filteredPosts.map((post) => (
+                    <div key={post.id} className="bg-white rounded-lg shadow overflow-hidden">
+                      {/* Project Header */}
+                      <div 
+                        onClick={() => router.push(`/app/post/${post.projectId}`)}
+                        className="bg-kanyini-primary px-4 py-2 cursor-pointer hover:bg-green-700 transition"
+                      >
+                        <p className="text-white font-semibold text-sm">{post.projectName}</p>
+                      </div>
+
+                      {/* Post Content */}
+                      <div className="p-4">
+                        <p className="text-gray-700 text-sm leading-relaxed mb-3">{post.content}</p>
+                        
+                        {/* Photo */}
+                        {post.type === 'photo' && post.imageUrl && (
+                          <div className="relative mb-3">
+                            <img
+                              src={post.imageUrl}
+                              alt="Post image"
+                              className="w-full h-64 object-cover rounded-lg"
+                            />
+                          </div>
+                        )}
+
+                        {/* Video */}
+                        {post.type === 'video' && post.videoThumbnail && (
+                          <div className="relative mb-3">
+                            <img
+                              src={post.videoThumbnail}
+                              alt="Video thumbnail"
+                              className="w-full h-64 object-cover rounded-lg"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+                              <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                                <Play className="w-8 h-8 text-kanyini-primary ml-1" />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Podcast */}
+                        {post.type === 'podcast' && (
+                          <div className="relative mb-3">
+                            <div 
+                              className="relative cursor-pointer"
+                              onClick={() => window.open(post.podcastUrl, '_blank')}
+                            >
+                              <img
+                                src={post.videoThumbnail}
+                                alt="Podcast thumbnail"
+                                className="w-full h-64 object-cover rounded-lg"
+                              />
+                              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-lg">
+                                <div className="w-16 h-16 bg-white bg-opacity-90 rounded-full flex items-center justify-center">
+                                  <Play className="w-8 h-8 text-kanyini-primary ml-1" />
+                                </div>
+                              </div>
+                              <div className="absolute bottom-4 left-4 right-4">
+                                <div className="bg-white bg-opacity-90 rounded-lg p-2 flex items-center justify-between">
+                                  <div className="flex items-center gap-2">
+                                    <Headphones className="w-4 h-4 text-gray-600" />
+                                    <span className="text-xs font-medium text-gray-900">Video Podcast</span>
+                                  </div>
+                                  {post.podcastDuration && (
+                                    <span className="text-xs text-gray-600">{post.podcastDuration}</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Article */}
+                        {post.type === 'article' && (
+                          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-3">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <FileText className="w-6 h-6 text-gray-600" />
+                              </div>
+                              <div className="flex-1">
+                                {post.articleTitle && (
+                                  <h5 className="text-sm font-bold text-gray-900 mb-1">{post.articleTitle}</h5>
+                                )}
+                                {post.articleExcerpt && (
+                                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">{post.articleExcerpt}</p>
+                                )}
+                              </div>
+                            </div>
+                            <button 
+                              onClick={() => window.open(post.articleUrl, '_blank')}
+                              className="w-full bg-kanyini-primary text-white py-2.5 rounded-lg hover:bg-green-700 transition font-semibold text-sm flex items-center justify-center gap-2"
+                            >
+                              <FileText className="w-4 h-4" />
+                              Read Article
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Engagement Stats */}
+                        <div className={`flex items-center gap-4 pt-3 border-t border-gray-100 ${post.type === 'text' ? 'mt-3' : ''}`}>
+                          <div className="flex items-center gap-1 text-gray-600">
+                            <ThumbsUp className="w-4 h-4" />
+                            <span className="text-sm">{post.likes}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-gray-600">
+                            <MessageSquare className="w-4 h-4" />
+                            <span className="text-sm">{post.comments}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-gray-600">
+                            <Share2 className="w-4 h-4" />
+                            <span className="text-sm">{post.shares}</span>
+                          </div>
+                          <div className="ml-auto text-xs text-gray-500">{post.timestamp}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Activity Tab Content */}
+          {contributionSubTab === 'activity' && (
+            <div className="bg-white rounded-lg shadow p-4">
+              <div className="space-y-4">
+              {/* Activity Item - Comment */}
+              <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-900 mb-1">
+                      <span className="font-semibold">You commented</span> on a post in <span className="font-semibold text-kanyini-primary">Reforestation Initiative</span>
+                    </p>
+                    <p className="text-xs text-gray-500">1 week ago</p>
+                    <div className="mt-2 p-2 bg-gray-50 rounded-lg">
+                      <p className="text-xs text-gray-700">"This is incredible work! Happy to support this initiative."</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Activity Item - Like */}
+              <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <ThumbsUp className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-900 mb-1">
+                      <span className="font-semibold">You liked</span> a post in <span className="font-semibold text-kanyini-primary">Education Program</span>
+                    </p>
+                    <p className="text-xs text-gray-500">2 weeks ago</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Activity Item - Contribution */}
+              <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Heart className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-900 mb-1">
+                      <span className="font-semibold">You contributed</span> $500 to <span className="font-semibold text-kanyini-primary">Clean Water Project</span>
+                    </p>
+                    <p className="text-xs text-gray-500">2 weeks ago</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Activity Item - Volunteer */}
+              <div className="pb-4">
+                <div className="flex gap-3">
+                  <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Users className="w-5 h-5 text-orange-600" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-900 mb-1">
+                      <span className="font-semibold">You volunteered</span> 8 hours at <span className="font-semibold text-kanyini-primary">Beach Cleanup Event</span>
+                    </p>
+                    <p className="text-xs text-gray-500">1 week ago</p>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'profile' && (
+        <div className="space-y-4">
 
       {/* About Section */}
       <div className="bg-white rounded-lg shadow p-4">
@@ -691,17 +1419,8 @@ export default function MyProfilePage() {
           </button>
         )}
       </div>
-
-      {/* Logout Button */}
-      <div className="bg-white rounded-lg shadow p-4 mb-4">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition font-medium"
-        >
-          <LogOut className="w-5 h-5" />
-          Logout
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Intellsys Section */}
       <a 
@@ -719,6 +1438,17 @@ export default function MyProfilePage() {
           />
         </div>
       </a>
+
+      {/* Logout Button */}
+      <div className="bg-white rounded-lg shadow p-4 mb-4">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition font-medium"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
+      </div>
 
       {/* Edit Modals */}
       

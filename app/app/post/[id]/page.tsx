@@ -1,8 +1,9 @@
 'use client';
 
-import { ArrowLeft, Calendar, MapPin, Users, Heart, MessageCircle, Share2, Play, Image as ImageIcon, Headphones, FileText } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, Users, Heart, MessageCircle, Share2, Play, Image as ImageIcon, Headphones, FileText, QrCode, X } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface Post {
   id: number;
@@ -27,6 +28,10 @@ export default function ProjectDetailPage() {
   const params = useParams();
   const projectId = params.id as string;
   const [contentFilter, setContentFilter] = useState<'all' | 'posts' | 'podcasts' | 'articles'>('all');
+  const [showQRCode, setShowQRCode] = useState(false);
+  
+  // Get the current URL for the QR code
+  const projectUrl = typeof window !== 'undefined' ? `${window.location.origin}/app/post/${projectId}` : '';
 
   // Project details
   const projects: { [key: string]: any } = {
@@ -958,16 +963,29 @@ export default function ProjectDetailPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-3 gap-3 pt-2">
-              <button className="border-2 border-kanyini-primary text-kanyini-primary py-3 rounded-lg hover:bg-green-50 transition font-semibold text-sm">
-                Follow
-              </button>
-              <button className="bg-kanyini-primary text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
-                Contribute
-              </button>
-              <button className="bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
-                Join Team
-              </button>
+            <div className="space-y-3 pt-2">
+              {/* Row 1: Follow | Share QR Code */}
+              <div className="grid grid-cols-2 gap-3">
+                <button className="border-2 border-kanyini-primary text-kanyini-primary py-3 rounded-lg hover:bg-green-50 transition font-semibold text-sm">
+                  Follow
+                </button>
+                <button 
+                  onClick={() => setShowQRCode(true)}
+                  className="flex items-center justify-center gap-2 border-2 border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition font-semibold text-sm"
+                >
+                  <QrCode className="w-4 h-4" />
+                  Share QR Code
+                </button>
+              </div>
+              {/* Row 2: Join Team | Contribute */}
+              <div className="grid grid-cols-2 gap-3">
+                <button className="bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
+                  Join Team
+                </button>
+                <button className="bg-kanyini-primary text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold text-sm">
+                  Contribute
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1148,6 +1166,71 @@ export default function ProjectDetailPage() {
         </div>
 
       </div>
+
+      {/* QR Code Modal */}
+      {showQRCode && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">Share Project</h3>
+              <button
+                onClick={() => setShowQRCode(false)}
+                className="text-gray-400 hover:text-gray-600 transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* QR Code */}
+            <div className="flex flex-col items-center justify-center py-6">
+              <div className="bg-white p-4 rounded-lg border-2 border-gray-200 mb-4">
+                {projectUrl && (
+                  <QRCodeSVG
+                    value={projectUrl}
+                    size={256}
+                    level="H"
+                    includeMargin={true}
+                  />
+                )}
+              </div>
+              <p className="text-sm text-gray-600 text-center mb-2">
+                Scan this QR code to view and contribute to this project
+              </p>
+              <p className="text-xs text-gray-500 text-center break-all px-4">
+                {projectUrl}
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator.share({
+                      title: project.name,
+                      text: `Check out this project: ${project.name}`,
+                      url: projectUrl,
+                    }).catch(() => {});
+                  } else {
+                    navigator.clipboard.writeText(projectUrl);
+                    alert('Link copied to clipboard!');
+                  }
+                }}
+                className="flex-1 bg-kanyini-primary text-white py-3 rounded-lg hover:bg-green-700 transition font-semibold text-sm"
+              >
+                Share Link
+              </button>
+              <button
+                onClick={() => setShowQRCode(false)}
+                className="flex-1 border-2 border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition font-semibold text-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { User, Users, Newspaper, FolderKanban, TrendingUp } from 'lucide-react';
+import { User, Users, Newspaper, FolderKanban, Plus } from 'lucide-react';
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -12,7 +12,7 @@ export default function BottomNav() {
     { name: 'Connect', href: '/app/community', Icon: Users, active: true },
     { name: 'Feed', href: '/app/jobs', Icon: Newspaper, active: true },
     { name: 'Explore', href: '/app/post', Icon: FolderKanban, active: true },
-    { name: 'Impact', href: '/app/impact', Icon: TrendingUp, active: true },
+    { name: 'Post', href: '/app/create', Icon: Plus, active: true },
   ];
 
   return (
