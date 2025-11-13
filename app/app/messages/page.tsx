@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Send, Users, User, MoreVertical, ArrowLeft, Paperclip, Smile, Image as ImageIcon } from 'lucide-react';
+import { Search, Send, Users, User, MoreVertical, ArrowLeft, Paperclip, Smile, Image as ImageIcon, Shield, MessageSquare } from 'lucide-react';
 
 interface Message {
   id: number;
@@ -14,7 +14,7 @@ interface Message {
 
 interface Conversation {
   id: number;
-  type: 'individual' | 'group';
+  type: 'individual' | 'group' | 'query';
   name: string;
   avatar?: string;
   lastMessage: string;
@@ -22,15 +22,29 @@ interface Conversation {
   unread: number;
   online?: boolean;
   members?: string[];
+  queryId?: string; // Unique identifier for queries
 }
 
 export default function MessagesPage() {
-  const [activeTab, setActiveTab] = useState<'all' | 'individual' | 'groups'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'individual' | 'groups' | 'admin'>('all');
   const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [queries, setQueries] = useState<Conversation[]>([
+    {
+      id: 1000,
+      type: 'query',
+      name: 'Query #1',
+      lastMessage: 'Thank you for raising a query. Our team will get back to you soon.',
+      lastMessageTime: 'Just now',
+      unread: 0,
+      queryId: 'query-1000'
+    }
+  ]);
+  const [nextQueryId, setNextQueryId] = useState(1001); // Start from 1001 since 1000 is used
 
-  const conversations: Conversation[] = [
+  // Regular conversations (not queries)
+  const regularConversations: Conversation[] = [
     {
       id: 1,
       type: 'individual',
@@ -105,7 +119,20 @@ export default function MessagesPage() {
     }
   ];
 
+  // Combine regular conversations with queries
+  const allConversations = [...regularConversations, ...queries];
+
   const messageHistory: { [key: number]: Message[] } = {
+    1000: [
+      {
+        id: 1,
+        senderId: 'admin',
+        senderName: 'Admin',
+        text: 'Thank you for raising a query. Our team will get back to you soon.',
+        timestamp: 'Just now',
+        isMe: false
+      }
+    ],
     1: [
       {
         id: 1,
@@ -252,15 +279,20 @@ export default function MessagesPage() {
     ]
   };
 
-  const filteredConversations = conversations.filter(conv => {
+  const filteredConversations = allConversations.filter(conv => {
     const matchesSearch = conv.name.toLowerCase().includes(searchQuery.toLowerCase());
+    // Exclude queries from "All Messages" tab
+    if (activeTab === 'all' && conv.type === 'query') {
+      return false;
+    }
     const matchesTab = activeTab === 'all' || 
                       (activeTab === 'individual' && conv.type === 'individual') ||
-                      (activeTab === 'groups' && conv.type === 'group');
+                      (activeTab === 'groups' && conv.type === 'group') ||
+                      (activeTab === 'admin' && conv.type === 'query');
     return matchesSearch && matchesTab;
   });
 
-  const selectedConv = conversations.find(c => c.id === selectedConversation);
+  const selectedConv = allConversations.find(c => c.id === selectedConversation);
   const messages = selectedConversation ? messageHistory[selectedConversation] || [] : [];
 
   const handleSendMessage = () => {
@@ -269,6 +301,36 @@ export default function MessagesPage() {
       console.log('Sending message:', messageText);
       setMessageText('');
     }
+  };
+
+  const handleRaiseQuery = () => {
+    const queryNumber = queries.length + 1;
+    const newQuery: Conversation = {
+      id: nextQueryId,
+      type: 'query',
+      name: `Query #${queryNumber}`,
+      lastMessage: 'Your query has been submitted. Admin will respond soon.',
+      lastMessageTime: 'Just now',
+      unread: 0,
+      queryId: `query-${nextQueryId}`
+    };
+    
+    // Initialize message history for the new query
+    messageHistory[nextQueryId] = [
+      {
+        id: 1,
+        senderId: 'admin',
+        senderName: 'Admin',
+        text: 'Thank you for raising a query. Our team will get back to you soon.',
+        timestamp: 'Just now',
+        isMe: false
+      }
+    ];
+    
+    setQueries([...queries, newQuery]);
+    setNextQueryId(nextQueryId + 1);
+    setSelectedConversation(nextQueryId);
+    setActiveTab('admin');
   };
 
   if (selectedConversation) {
@@ -434,7 +496,37 @@ export default function MessagesPage() {
           <Users className="w-4 h-4 inline-block mr-1" />
           Groups
         </button>
+        <button
+          onClick={() => {
+            setActiveTab('admin');
+            setSelectedConversation(null); // Don't auto-select, show query list
+          }}
+          className={`px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition ${
+            activeTab === 'admin'
+              ? 'bg-kanyini-primary text-white'
+              : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          <Shield className="w-4 h-4 inline-block mr-1" />
+          Admin
+        </button>
       </div>
+
+      {/* Raise Query Button - Only show in Admin tab */}
+      {activeTab === 'admin' && !selectedConversation && (
+        <div className="bg-white rounded-lg shadow p-4">
+          <button
+            onClick={handleRaiseQuery}
+            className="w-full bg-gradient-to-r from-kanyini-primary to-green-700 text-white py-3 rounded-lg hover:from-green-700 hover:to-green-800 transition font-semibold text-sm flex items-center justify-center gap-2"
+          >
+            <MessageSquare className="w-5 h-5" />
+            Raise a Query
+          </button>
+          <p className="text-xs text-gray-500 text-center mt-2">
+            Create a new query to get help from our admin team
+          </p>
+        </div>
+      )}
 
       {/* Conversations List */}
       <div className="space-y-2">
@@ -455,6 +547,8 @@ export default function MessagesPage() {
                   <div className="w-12 h-12 bg-gradient-to-br from-kanyini-primary to-green-600 rounded-full flex items-center justify-center text-white font-semibold">
                     {conv.type === 'group' ? (
                       <Users className="w-6 h-6" />
+                    ) : conv.type === 'query' ? (
+                      <Shield className="w-6 h-6" />
                     ) : (
                       conv.name.charAt(0)
                     )}
